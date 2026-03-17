@@ -71,4 +71,4 @@ Templates provide static reference files that complement the dynamic agent and s
 
 ## Version
 
-1.2.0 — Developer Agent, Bootstrap Command & UAT Fixes
+1.0.0

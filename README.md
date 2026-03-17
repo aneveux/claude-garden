@@ -11,7 +11,7 @@ Take what you need, ignore the rest, and don’t be surprised if things evolve.
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| [shellcraft](plugins/shellcraft/) | 0.3.0 | Opinionated Bash development — conventions, patterns, and tool preferences |
+| [shellcraft](plugins/shellcraft/) | 1.0.0 | Opinionated Bash development — conventions, patterns, and tool preferences |
 
 More seeds will appear over time.
 
