@@ -1,26 +1,39 @@
-# Claude Garden
+# 🌱 Claude Garden
 
-Personal Claude Code plugin marketplace.
+A small, slightly opinionated garden of personal Claude plugins.  
+Some are practical, some are weird, all are grown with care.
 
-## Plugins
+Take what you need, ignore the rest, and don’t be surprised if things evolve.
+
+---
+
+## 🌼 Plugins
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
 | [shellcraft](plugins/shellcraft/) | 0.3.0 | Opinionated Bash development — conventions, patterns, and tool preferences |
 
-## Installation
+More seeds will appear over time.
+
+---
+
+## 🌿 Installation
+
+Add the garden to your marketplace:
 
 ```
 /plugin marketplace add aneveux/claude-garden
 ```
 
-Install a plugin:
+Pick what you want to grow locally:
 
 ```
 /plugin install shellcraft@claude-garden
 ```
 
-## Structure
+---
+
+## 🌳 Structure
 
 ```
 .claude-plugin/
@@ -31,3 +44,13 @@ plugins/
     skills/
     commands/
 ```
+
+---
+
+## 🌸 Notes
+
+- This is a personal space shared publicly.
+- Stability is a spectrum.
+- Ideas here tend to grow, mutate, or get composted.
+
+Enjoy the garden.
