@@ -1,0 +1,19 @@
+{
+  "name": "claude-garden",
+  "owner": {
+    "name": "Antoine Neveux",
+    "email": "antoine@neveux.me"
+  },
+  "metadata": {
+    "description": "Personal Claude Code plugin marketplace",
+    "version": "1.2.0"
+  },
+  "plugins": [
+    {
+      "name": "shellcraft",
+      "description": "Bash development plugin with quality validation agents, comprehensive skills, and project templates.",
+      "source": "./plugins/shellcraft",
+      "strict": false
+    }
+  ]
+}
