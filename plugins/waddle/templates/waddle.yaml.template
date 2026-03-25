@@ -1,0 +1,16 @@
+project:
+  name: "{{PROJECT_NAME}}"
+  description: "{{PROJECT_DESCRIPTION}}"
+
+specialists:
+  # Uncomment and set to delegate implementation to domain-specific agents:
+  # bash: shellcraft:bash-developer
+  # java: javacraft:java-developer
+
+models:
+  worker: sonnet  # default for all workers (accepts: sonnet, opus, haiku, or any model ID)
+  # Per-role overrides (optional):
+  # planner: opus
+  # implementer: sonnet
+  # reviewer: haiku
+  # fixer: sonnet

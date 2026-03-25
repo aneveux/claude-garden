@@ -6,13 +6,19 @@
   },
   "metadata": {
     "description": "Personal Claude Code plugin marketplace",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "shellcraft",
       "description": "Bash development plugin with quality validation agents, comprehensive skills, and project templates.",
       "source": "./plugins/shellcraft",
+      "strict": false
+    },
+    {
+      "name": "waddle",
+      "description": "Agent framework for structured development - plan, implement, review, learn",
+      "source": "./plugins/waddle",
       "strict": false
     }
   ]

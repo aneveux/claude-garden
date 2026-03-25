@@ -12,6 +12,7 @@ Take what you need, ignore the rest, and don’t be surprised if things evolve.
 | Plugin | Version | Description |
 |--------|---------|-------------|
 | [shellcraft](plugins/shellcraft/) | 1.0.0 | Opinionated Bash development — conventions, patterns, and tool preferences |
+| [waddle](plugins/waddle/) | 1.0.0 | Agent framework for structured development — plan, implement, review, learn |
 
 More seeds will appear over time.
 
@@ -29,6 +30,7 @@ Pick what you want to grow locally:
 
 ```
 /plugin install shellcraft@claude-garden
+/plugin install waddle@claude-garden
 ```
 
 ---
@@ -43,6 +45,11 @@ plugins/
     agents/
     skills/
     commands/
+  waddle/
+    commands/
+    references/
+    templates/
+    hooks/
 ```
 
 ---
