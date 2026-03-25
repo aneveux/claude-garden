@@ -14,6 +14,15 @@ Show sitting penguin:
 ## Planning
 
 1. Read relevant code files to understand the full scope
+1b. Reactive stewardship check:
+    - Read `.waddle/waddle.yaml` stewardship config
+    - If stewardship.vision path exists: read the VISION.md file
+    - If stewardship.decisions path exists: read the DECISIONS.md file
+    - Keep these in context for step 3 (drafting the plan)
+    - When drafting the plan, consider:
+      - Does this work align with VISION.md principles?
+      - Does the approach conflict with any ADR in DECISIONS.md?
+      - If misalignment found: include a "## Notes" section in the plan flagging it
 2. Find and read the plan format reference: Glob `**/waddle/references/plan-format.md`, then read it
 3. Draft a lightweight plan:
    - Title

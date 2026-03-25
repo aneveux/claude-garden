@@ -1,5 +1,5 @@
 {
-  "description": "Waddle framework hooks for context monitoring and session state persistence",
+  "description": "Waddle framework hooks for context monitoring, session state, and audit tracking",
   "hooks": {
     "PostToolUse": [
       {
@@ -7,6 +7,17 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/context-monitor.js\""
+          }
+        ]
+      },
+      {
+        "matcher": {
+          "tool_name": "Bash"
+        },
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/audit-nudge.js\""
           }
         ]
       }

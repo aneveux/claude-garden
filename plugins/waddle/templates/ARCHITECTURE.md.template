@@ -1,0 +1,20 @@
+# {{PROJECT_NAME}} — Architecture
+
+## Overview
+<!-- One paragraph: what does the system do at the highest level? -->
+
+## Layers
+<!-- What are the major layers/tiers? CLI -> Service -> Data? Frontend -> API -> DB? -->
+<!-- For each layer: name, responsibility, what it owns, what it doesn't touch -->
+
+## Module Map
+<!-- Key modules/packages and their responsibilities -->
+<!-- Which modules depend on which? What's the dependency direction? -->
+
+## Data Flow
+<!-- How does a typical request/command flow through the system? -->
+<!-- Entry point -> processing -> storage/output -->
+
+## Boundaries
+<!-- What are the hard boundaries? What should NEVER cross them? -->
+<!-- Example: "CLI layer never accesses the database directly" -->

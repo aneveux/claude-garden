@@ -1,0 +1,26 @@
+# {{PROJECT_NAME}} — Vision
+
+## Purpose
+{{PROJECT_DESCRIPTION}}
+
+## Target User
+<!-- Who is this for? Be specific: role, experience level, context of use -->
+
+## Principles
+<!-- The "always" rules. 5-10 max. Each should be a decision filter. -->
+<!-- Example: "Terminal-native: every workflow works without leaving the terminal" -->
+
+1.
+2.
+3.
+
+## Non-Goals
+<!-- The "never" rules. Often more useful than goals — they prevent scope creep. -->
+<!-- Example: "No GUI — we are terminal-native, not cross-platform" -->
+
+1.
+2.
+3.
+
+## Constraints
+<!-- Hard limits: tech stack, performance budgets, compatibility, etc. -->

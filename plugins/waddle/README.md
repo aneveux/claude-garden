@@ -17,7 +17,7 @@ An agent framework for structured development with Claude Code. Waddle breaks wo
 /waddle:do add user auth   # Give it a task
 ```
 
-Bootstrap creates `.waddle/` with two files: `waddle.yaml` (config) and `STATE.md` (state + learnings).
+Bootstrap creates `.waddle/` with config, state, and direction documents. Two questions, then you're ready.
 
 ## Commands
 
@@ -27,6 +27,9 @@ Bootstrap creates `.waddle/` with two files: `waddle.yaml` (config) and `STATE.m
 | `/waddle:do <task>` | Main command - plan, implement, review |
 | `/waddle:status` | Show current state, progress, learnings |
 | `/waddle:retro` | Review learnings, promote patterns to CLAUDE.md |
+| `/waddle:audit [lens]` | Run project health audit (6 lenses) |
+| `/waddle:idea [description]` | Capture and evaluate ideas against project direction |
+| `/waddle:help` | Show commands and usage guide |
 
 ## How It Works
 
@@ -86,11 +89,69 @@ Every worker asks itself after each task: "Did I discover anything non-obvious a
 
 Run `/waddle:retro` periodically to review learnings. Patterns that show up repeatedly get promoted to your project's `CLAUDE.md`, where future sessions pick them up automatically.
 
+## Stewardship
+
+Waddle watches project direction, consistency, and quality — not just execution. Stewardship extends the lifecycle: ideate, build, learn, audit, ideate.
+
+### Stewardship Documents
+
+Bootstrap creates direction documents alongside the waddle config:
+
+- **VISION.md** — Principles, non-goals, constraints. The north star for "should we build this?"
+- **DECISIONS.md** — Architecture Decision Records (ADRs). Why X over Y, captured once so future sessions don't re-debate.
+- **ARCHITECTURE.md** — Optional. Layer definitions, module boundaries, data flow. Created during bootstrap.
+
+### Audits (`/waddle:audit`)
+
+Six lenses check different aspects of project health:
+
+| Lens | What it checks | Default frequency |
+|------|---------------|-------------------|
+| Consistency | Naming, patterns, API shape uniformity | Every 8 commits |
+| Security | Auth patterns, secrets, input validation | Every 15 commits (auto) |
+| Architecture | Layer boundaries, dependency direction | Every 20 commits |
+| Vision | Alignment with principles, non-goal violations | On-demand |
+| DX | Error messages, CLI UX, onboarding friction | On-demand |
+| Tech Debt | TODOs, dead code, test gaps, stale deps | On-demand |
+
+Run a single lens (`/waddle:audit security`) or sweep all configured lenses (`/waddle:audit`).
+
+### Ideas (`/waddle:idea`)
+
+Capture ideas with automatic evaluation against project direction. Each idea is checked against VISION.md principles and DECISIONS.md for conflicts before storage.
+
+### Reactive Stewardship
+
+During planning (standard + complex paths), waddle reads VISION.md and DECISIONS.md to flag misalignment before implementation begins. Obvious conflicts are caught at routing time in `/waddle:do`.
+
+### Audit Configuration
+
+Configure thresholds and modes in `.waddle/waddle.yaml`:
+
+```yaml
+stewardship:
+  vision: VISION.md
+  decisions: DECISIONS.md
+  # architecture: docs/ARCHITECTURE.md
+
+  audits:
+    consistency:
+      frequency: 8      # commits between checks
+      mode: nudge        # remind user
+    security:
+      frequency: 15
+      mode: auto         # run automatically
+    architecture:
+      frequency: 20
+      mode: nudge
+```
+
 ## Hooks
 
-Waddle includes two optional hooks:
+Waddle includes three hooks:
 
 - `context-monitor.js` (PostToolUse) warns when remaining context drops below 35% and 25%, so you can wrap up and continue in a fresh session.
+- `audit-nudge.js` (PostToolUse) counts git commits and nudges when audit thresholds are reached. Security audits auto-trigger; others nudge only.
 - `session-save.js` (Stop) updates the `Last:` timestamp in STATE.md when a session ends.
 
 The context monitor reads metrics from a statusline bridge file (`/tmp/claude-ctx-{session_id}.json`). If no bridge file exists, it stays silent — context monitoring is inactive until you install a statusline plugin that writes this file. Built-in options include `/safety-net:set-statusline` and `/gsd:settings`.
@@ -104,6 +165,8 @@ plugins/waddle/
     bootstrap.md       # Project initialization
     status.md          # State reporter
     retro.md           # Learning promotion
+    audit.md           # Project health audits
+    idea.md            # Idea capture + evaluation
     help.md            # Usage guide
   references/
     path-simple.md     # Simple path execution
@@ -112,13 +175,19 @@ plugins/waddle/
     conventions.md     # Worker protocols (injected into spawn prompts)
     plan-format.md     # Plan file specification
     worker-protocol.md # Worker role documentation
+    audit-lenses.md    # Audit lens definitions (6 lenses)
     personality.md     # ASCII art + tone guide
   templates/
     waddle.yaml.template
     STATE.md.template
+    VISION.md.template
+    DECISIONS.md.template
+    ARCHITECTURE.md.template
+    BACKLOG.md.template
   hooks/
     hooks.json
     context-monitor.js
+    audit-nudge.js
     session-save.js
 ```
 
@@ -130,9 +199,13 @@ All waddle state lives in `.waddle/`:
 .waddle/
   waddle.yaml          # Project config
   STATE.md             # Current focus, progress, learnings
+  BACKLOG.md           # Unified task backlog (ideas + audit findings)
+  .audit-tracker.json  # Commit counters per audit lens
   plans/
     001-user-auth.md   # Plan files (created by /waddle:do)
     002-api-rework.md
+  audits/
+    2026-03-25-security.md  # Audit reports
 ```
 
 Plans track status (`draft` -> `approved` -> `in-progress` -> `done`) and task completion via checkboxes. `/waddle:status` reads all of this and gives you a quick summary.

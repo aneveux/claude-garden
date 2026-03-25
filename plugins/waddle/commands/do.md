@@ -12,6 +12,13 @@ You are the waddle orchestrator running in the user's session. You route request
 1. Read `.waddle/waddle.yaml` (REQUIRED - if missing, tell user to run `/waddle:bootstrap`)
 2. Read `.waddle/STATE.md` (REQUIRED)
 3. Note any active plan, progress, pending decisions, recent learnings
+3b. Read stewardship config from waddle.yaml
+3c. If stewardship.vision path configured and file exists: read VISION.md, keep in context
+3d. If stewardship.decisions path configured and file exists: read DECISIONS.md, keep in context
+3e. Note: these documents are available for the planning phase in path-standard.md
+    and path-complex.md. The path files reference them during plan drafting (see
+    reactive stewardship steps). No additional do.md logic needed beyond loading
+    them into context — the path files handle the checking.
 
 If STATE.md shows work in progress (Progress is not "idle" and not "done"), inform the user:
 "There's active work: [focus]. Resume this, or start something new?"
@@ -31,6 +38,12 @@ Use AskUserQuestion:
 ### Resumption Flow
 
 1. Read the plan file listed in STATE.md's Plan field
+1b. Load stewardship documents (same as Step 0, steps 3b-3d):
+    - Read stewardship config from waddle.yaml
+    - If vision path configured and file exists: read VISION.md
+    - If decisions path configured and file exists: read DECISIONS.md
+    These are needed if the resumed work reaches the review phase, where
+    the reviewer may need to check alignment.
 2. Parse the plan:
    - Count `[x]` (done) vs `[ ]` (remaining) tasks
    - Determine plan type: has `## Wave` headers = complex, otherwise = standard
@@ -71,8 +84,24 @@ The user's request follows `/waddle:do`. Parse it for:
 - **Path override**: `quick:` prefix -> force simple. `deep:` prefix -> force complex.
 - **Natural language request**: the actual task description
 
-If the task description is empty (user ran `/waddle:do` with no argument), ask:
-"What would you like to work on?" and wait for their response before continuing.
+If the task description is empty (user ran `/waddle:do` with no argument):
+1. Read `.waddle/BACKLOG.md` if it exists
+2. If backlog has open items, present the top items (critical first) and offer to pull one:
+
+   Use AskUserQuestion:
+   - question: "Pick a backlog item to work on, or describe something new?"
+   - header: "What to work on"
+   - options:
+     - label: "<top critical/warning item description>" (one option per top item, max 3)
+       description: "<source> — <date>"
+     - label: "Something else"
+       description: "Describe a new task"
+
+   If they pick a backlog item, use its description as the task.
+   If they pick "Something else", ask: "What would you like to work on?"
+
+3. If no backlog or backlog is empty, ask:
+   "What would you like to work on?" and wait for their response before continuing.
 
 ## Step 2: Route (Adaptive Sizing)
 
@@ -80,6 +109,12 @@ Read relevant code to understand scope. Consider:
 - How many files will change?
 - Is the change self-contained or cross-cutting?
 - Is the domain familiar (check STATE.md learnings) or unknown?
+
+If VISION.md was loaded: before routing, quick-check whether the request aligns
+with vision principles. If obvious misalignment (e.g., request explicitly violates
+a non-goal), flag it to the user before routing:
+"Note: this request may conflict with non-goal '<X>' in VISION.md. Proceed anyway?"
+Use AskUserQuestion with Proceed/Cancel options.
 
 | Signal | Path |
 |--------|------|
@@ -99,6 +134,21 @@ Read the appropriate path reference file and follow its instructions:
 - **Simple**: Glob `**/waddle/references/path-simple.md`, read and execute
 - **Standard**: Glob `**/waddle/references/path-standard.md`, read and execute
 - **Complex**: Glob `**/waddle/references/path-complex.md`, read and execute
+
+## Step 4: Post-Completion Backlog Check
+
+After work is completed (path execution finished, review passed):
+
+1. Read `.waddle/BACKLOG.md` if it exists
+2. Check if any open items were addressed by the work just completed
+   (compare the task description and changed files against open backlog items)
+3. If matches found, mark them `[x]` and move to the Done section:
+   ```
+   - [x] <description> — `<source>` done YYYY-MM-DD
+   ```
+4. If the completed task originated from a backlog item, make sure that item is marked done
+
+This step is lightweight — a quick scan, not a deep analysis. Skip if no backlog exists.
 
 ## Error Handling
 

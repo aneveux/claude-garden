@@ -162,3 +162,74 @@ Why: The review worker re-verifies everything, but if the implementer ships
 broken code, the fix/re-review cycle costs 2x the tokens and time of getting it
 right the first time. Self-verification is the cheapest quality gate in the system.
 ```
+
+## 9. Stewardship Protocol
+
+Used during planning phase (do.md, path-standard, path-complex). Implementation
+workers use §5 (Pending Decisions) to capture new technical choices instead.
+
+```
+STEWARDSHIP RULES:
+- During planning, before drafting tasks, check if stewardship documents exist:
+  - Read VISION.md (path from waddle.yaml stewardship.vision)
+  - Read DECISIONS.md (path from waddle.yaml stewardship.decisions)
+  - Read ARCHITECTURE.md (path from waddle.yaml stewardship.architecture) if configured
+- If VISION.md exists:
+  - Check the proposed work against principles: does this support at least one?
+  - Check against non-goals: does this violate any?
+  - If misalignment found: flag it in the plan with a NOTE, don't silently proceed
+- If DECISIONS.md exists:
+  - Check if the proposed approach conflicts with any accepted ADR
+  - If conflict: flag it. Either the approach needs to change, or the ADR needs updating
+- When making significant technical choices during implementation:
+  - If the choice isn't covered by an existing ADR, note it as a Pending Decision
+    so the user can add it to DECISIONS.md later
+- After completing work that changes project structure:
+  - Note if ARCHITECTURE.md needs updating (add to Pending Decisions)
+```
+
+## 10. Backlog Protocol
+
+```
+BACKLOG RULES:
+- The backlog (.waddle/BACKLOG.md) is the unified inbox for actionable work items.
+  Three sources feed it: user ideas, audit findings, and retro observations.
+- After audit: append critical and warning findings to BACKLOG.md under their
+  severity heading. Read the current backlog first — skip findings that duplicate
+  existing open items from the same lens.
+- After /waddle:do completion: check BACKLOG.md for items that were addressed.
+  Mark them [x] and move to the Done section with a completion date.
+- Severity mapping:
+  - audit critical -> ### Critical
+  - audit warning  -> ### Warning
+  - user ideas     -> ### Normal (unless user specifies urgency)
+- Entry format: - [ ] <description> — `<source>` <date>
+  - source format: `audit:<lens>`, `user`, `retro`
+  - Example: - [ ] 3 endpoints missing rate limiting — `audit:security` 2026-03-25
+- Done format: - [x] <description> — `<source>` done <date>
+- Stale items: open items older than 30 days should be flagged during retro
+  for triage (archive, escalate, or keep).
+- Pending Decisions in STATE.md is for genuine choices needing human judgment
+  (e.g., "Redis vs in-memory?"). Actionable tasks go to the backlog instead.
+```
+
+## 11. Audit Protocol
+
+```
+AUDIT RULES (for AUDIT workers spawned by /waddle:audit):
+- You are an observer. Do NOT modify any source code. Only create the audit report.
+- Read the lens definition to understand what you're checking and where to look.
+- Ground every finding in evidence:
+  - Name the specific file(s) and line(s)
+  - Quote the relevant code or pattern
+  - Connect to a specific principle, decision, or convention that it violates
+- Severity classification:
+  - critical: Active risk -- security vulnerability, data loss potential, broken contract
+  - warning: Quality drift -- inconsistency, missing validation, tech debt accumulating
+  - info: Observation -- not wrong, but worth noting (potential improvement, style drift)
+- Do NOT inflate severity. A naming inconsistency is a warning, not critical.
+- Check your findings against CLAUDE.md gotchas -- if the project already knows about
+  something and has a documented workaround, don't report it as a finding.
+- The report format is specified by the orchestrator. Follow it exactly.
+- Log learnings to STATE.md (same Learning Protocol as other workers).
+```

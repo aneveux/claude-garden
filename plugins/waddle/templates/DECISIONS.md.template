@@ -1,0 +1,21 @@
+# {{PROJECT_NAME}} — Decisions
+
+Architecture Decision Records (ADRs). Each entry captures a significant
+technical choice, its context, and its consequences.
+
+When adding a new decision, use this format:
+
+## ADR-NNN: Title
+
+**Date:** YYYY-MM-DD
+**Status:** proposed | accepted | deprecated | superseded by ADR-XXX
+
+**Context:** What situation or problem prompted this decision?
+
+**Decision:** What did we decide?
+
+**Consequences:** What are the trade-offs? What becomes easier/harder?
+
+---
+
+<!-- Decisions will accumulate below this line -->

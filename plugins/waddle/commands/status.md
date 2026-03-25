@@ -15,6 +15,9 @@ Read and report the current project state.
 
 3. Read `.waddle/waddle.yaml` for project info
 
+3b. Read `.waddle/.audit-tracker.json` if it exists
+3c. Read stewardship config from waddle.yaml
+
 4. Check for active plans: Glob `.waddle/plans/*.md` — if the directory doesn't exist yet, skip this step. Otherwise read any plans with status != done/cancelled.
 
 5. Present status with appropriate penguin:
@@ -33,6 +36,13 @@ If work is active (plan in-progress):
 
          Pending decisions:
          - <any pending decisions>
+
+         Audits:
+         - Last: <most recent audit date and lens, or "never">
+         - Commits since: <total commits across all lenses from tracker>
+         - Due: <any lens past its threshold, or "all clear">
+
+         Backlog: <N critical, N warning, N normal from .waddle/BACKLOG.md, if file exists>
 ```
 
 If idle:
@@ -44,6 +54,13 @@ If idle:
   ^ ^
          Learnings so far: <count>
          Plans completed: <count>
+
+         Audits:
+         - Last: <most recent audit date and lens, or "never">
+         - Commits since: <total commits across all lenses from tracker>
+         - Due: <any lens past its threshold, or "all clear">
+
+         Backlog: <N critical, N warning, N normal from .waddle/BACKLOG.md, if file exists>
 
          Run /waddle:do <request> to start!
 ```

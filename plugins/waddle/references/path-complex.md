@@ -24,11 +24,21 @@ prompt: |
   Read relevant files, check dependencies, understand patterns.
   Return a summary of findings relevant to: <the user's request>
   Do NOT write any files. Just report back.
+model: <from waddle.yaml models.planner if set, else models.worker, default sonnet>
 ```
 
 2. Use research findings to inform planning
 
 ## Planning
+
+2b. Reactive stewardship check:
+    - Read `.waddle/waddle.yaml` stewardship config
+    - If stewardship.vision path exists: read the VISION.md file
+    - If stewardship.decisions path exists: read the DECISIONS.md file
+    - Pass these to the plan worker (include in the prompt under "## Project Direction"):
+      <VISION.md contents>
+      <DECISIONS.md contents>
+    - Tell the plan worker: "Flag any misalignment with vision principles or decision conflicts in a ## Notes section"
 
 3. Find and read the plan format reference (Glob `**/waddle/references/plan-format.md`)
 4. Either:
