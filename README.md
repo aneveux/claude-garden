@@ -11,8 +11,8 @@ Take what you need, ignore the rest, and don’t be surprised if things evolve.
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| [shellcraft](plugins/shellcraft/) | 1.0.0 | Opinionated Bash development — conventions, patterns, and tool preferences |
-| [waddle](plugins/waddle/) | 1.0.0 | Agent framework for structured development — plan, implement, review, learn |
+| [bark](plugins/bark/) | 2.0.0 | Opinionated Bash development — conventions, patterns, and tool preferences |
+| [trellis](plugins/trellis/) | 2.0.0 | Agent framework for structured development — plan, implement, review, learn |
 
 More seeds will appear over time.
 
@@ -29,8 +29,8 @@ Add the garden to your marketplace:
 Pick what you want to grow locally:
 
 ```
-/plugin install shellcraft@claude-garden
-/plugin install waddle@claude-garden
+/plugin install bark@claude-garden
+/plugin install trellis@claude-garden
 ```
 
 ---
@@ -41,11 +41,11 @@ Pick what you want to grow locally:
 .claude-plugin/
   marketplace.json
 plugins/
-  shellcraft/
+  bark/
     agents/
     skills/
     commands/
-  waddle/
+  trellis/
     commands/
     references/
     templates/
