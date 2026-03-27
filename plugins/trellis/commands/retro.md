@@ -30,13 +30,15 @@ Review accumulated learnings in STATE.md. Promote validated patterns to the proj
 
 Show the bloom:
 ```
+─────────────────────────────────────────────
       ,xXXXXx,
      ,XXXXXXXX,
-     XXXXXXXXXX   Trellis Retro
+     XXXXXXXXXX   🌸 Trellis Retro
      `"""XX"""`   Reviewing <N> learnings...
          XX
          XX
          XX
+─────────────────────────────────────────────
 ```
 
 **Patterns to promote** (seen 2+ times or clearly permanent):
@@ -80,11 +82,13 @@ Use AskUserQuestion:
 
 6. Report:
 ```
+─────────────────────────────────────────────
       ,xXXXXx,
      ,XXXXXXXX,
-     XXXXXXXXXX   Retro complete!
+     XXXXXXXXXX   🌳 Retro complete!
      `"""XX"""`   Promoted: <N> patterns to CLAUDE.md
          XX       Pruned: <M> stale learnings
          XX       Remaining: <K> learnings in STATE.md
          XX
+─────────────────────────────────────────────
 ```

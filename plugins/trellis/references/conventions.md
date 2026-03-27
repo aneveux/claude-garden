@@ -58,10 +58,10 @@ OUTPUT FORMAT:
   or
   <trellis:verdict>FIXME</trellis:verdict>
 
-  Output the verdict as an XML tag on its own line. The orchestrator machine-parses
-  this tag to decide the next step — the XML boundary makes extraction reliable even
-  when the rest of your review contains code blocks or markdown formatting.
-  Continue with the human-readable details below the tag.
+  The XML tag is the machine-readable verdict — the orchestrator parses it to decide
+  the next step. It must appear on its own line. The markdown summary below is the
+  human-readable version of the same verdict. Both are required: the tag for automation,
+  the summary for the user reading the review.
 
   **Verdict: PASS | FIXME** (N issues)
 
@@ -224,6 +224,38 @@ AUDIT RULES (for AUDIT workers spawned by /trellis:audit):
 - Log learnings to STATE.md (same Learning Protocol as other workers).
 ```
 
+## 12. Visual Identity Protocol
+
+```
+VISUAL IDENTITY:
+Trellis has a plant-themed personality. Every user-facing message should carry
+a plant marker so the user always knows they're interacting with trellis.
+
+LIFECYCLE EMOJIS — prefix the first text line of every user-facing output:
+  🌱  Starting, planning, ideas (seedling stage)
+  🌿  In-progress, implementing, working (growth stage)
+  🌸  Review, feedback, audit results (bloom stage)
+  🌳  Completion, done, idle status (mature tree)
+
+For multi-phase operations (like audits), use the emoji matching the current phase:
+  🌱 when starting/scoping, 🌿 while analyzing, 🌸 when presenting results.
+
+ASCII ART FRAMING — all ASCII art code blocks use horizontal rule frames:
+  - First line after opening ```: ─────────────────────────────────────────────
+  - Last line before closing ```: ─────────────────────────────────────────────
+  - The frame protects the art from first-line whitespace clipping
+  - The emoji goes on the message line inside the art, not on the frame
+
+NON-ART MESSAGES — when outputting text without ASCII art:
+  - Prefix with the lifecycle emoji matching the current stage
+  - Examples:
+    "🌱 This looks like a standard task. Planning..."
+    "🌿 Spawning implement worker..."
+    "🌸 Review found 2 issues."
+    "🌳 All done! Plan #003 complete."
+  - One emoji per message block is enough — don't overdo it
+```
+
 ## Machine-Parseable Output Tags
 
 Workers produce structured outputs that orchestrators parse via regex. Tags must appear on their own line.
@@ -253,7 +285,9 @@ needs — extra sections waste context tokens without helping the worker.
 | §9 Stewardship | — | — | — | yes | — |
 | §10 Backlog | — | — | — | — | — |
 | §11 Audit | — | — | — | — | yes |
+| §12 Visual Identity | yes | yes | yes | yes | yes |
 
 Notes:
-- §10 Backlog is handled by the orchestrator (do.md), not injected into workers
-- PLAN workers get §9 for stewardship checks; the plan format is injected separately
+- §10 Backlog is handled by orchestrator commands (do.md, audit.md, idea.md, retro.md), not injected into workers
+- PLAN workers get §9 for stewardship checks; the plan format is injected separately. The PLAN role is used in the complex path only — standard path plans are drafted inline by the orchestrator.
+- §12 Visual Identity is injected into ALL workers so every output carries plant personality

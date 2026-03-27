@@ -4,15 +4,17 @@ Cross-cutting change, redesign, or unfamiliar domain (8+ files). Research -> pla
 
 Show the sprout:
 ```
+─────────────────────────────────────────────
        _ _
       (_\_)
-     (__<_{}   Big task. Let me research and plan.
+     (__<_{}   🌱 Big task. Let me research and plan.
       (_/_)
      |\ |
       \\| /|
        \|//
         |/
    ,.,.,|.,.,.
+─────────────────────────────────────────────
 ```
 
 ## Research (optional)
@@ -28,6 +30,8 @@ prompt: |
   Read relevant files, check dependencies, understand patterns.
   Return a summary of findings relevant to: <the user's request>
   Do NOT write any files. Just report back.
+
+  <paste "Visual Identity" section from conventions.md>
 model: <from trellis.yaml models.planner if set, else models.worker, default sonnet>
 ```
 
@@ -67,6 +71,11 @@ prompt: |
 
   ## Plan Format
   <paste full format section from plan-format.md>
+
+  ## Protocols
+  <paste these sections from conventions.md:>
+  <"Stewardship Protocol" section>
+  <"Visual Identity" section>
 
   ## Instructions
   - Write a plan file to .trellis/plans/NNN-<slug>.md
@@ -117,6 +126,7 @@ model: <from trellis.yaml models.planner if set, else models.worker, default son
    - Verify wave tasks are done (check plan checkboxes)
    - Show garden for parallel waves:
 ```
+─────────────────────────────────────────────────────────────────
                     _
                   _(_)_                          wWWWw   _
       @@@@       (_)@(_)   vVVVv     _     @@@@  (___) _(_)_
@@ -126,6 +136,7 @@ model: <from trellis.yaml models.planner if set, else models.worker, default son
     \ |     \ |/       | / \ | /  \|/       |/    \|      \|/
     \\|//   \\|///  \\\|//\\\|/// \|///  \\\|//  \\|//  \\\|//
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+─────────────────────────────────────────────────────────────────
 ```
 
    - Proceed to next wave

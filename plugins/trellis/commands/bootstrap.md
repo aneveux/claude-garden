@@ -21,6 +21,7 @@ Initialize trellis on the current project. Creates `.trellis/` directory with co
 
 Show the sprout welcome:
 ```
+─────────────────────────────────────────────
        _ _
       (_\_)
      (__<_{}   Welcome to Trellis!
@@ -30,6 +31,7 @@ Show the sprout welcome:
        \|//
         |/
    ,.,.,|.,.,.
+─────────────────────────────────────────────
 ```
 
 **Q1**: Output the question directly and wait for the user's response:
@@ -138,8 +140,9 @@ Note: if `stewardship.architecture` is not configured (commented out in trellis.
 ## Report
 
 ```
+─────────────────────────────────────────────
     ,*-.
-    |  |   Trellis initialized!
+    |  |   🌳 Trellis initialized!
 ,.  |  |
 | |_|  |   .trellis/trellis.yaml  - project config
 `---.  |   .trellis/STATE.md     - state & learnings
@@ -147,6 +150,7 @@ Note: if `stewardship.architecture` is not configured (commented out in trellis.
     |  |
     |  |   Stewardship docs created. Run /trellis:audit to check project health anytime.
            Run /trellis:do <request> to start growing!
+─────────────────────────────────────────────
 ```
 
 Also suggest committing the new directory:

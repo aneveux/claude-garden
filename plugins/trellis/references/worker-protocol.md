@@ -23,6 +23,8 @@ All protocols are defined in `conventions.md` (the single source of truth). The 
 
 The **Injection Map** in `conventions.md` is the authoritative source for which sections each role receives. Numbering above matches conventions.md section numbers.
 
+12. **Visual Identity** (all roles) — plant emoji prefixes and ASCII art framing
+
 ## Role-Specific Behavior
 
 Your task prompt will tell you which role to perform:
@@ -31,6 +33,6 @@ Your task prompt will tell you which role to perform:
 
 **REVIEW**: Run the four-pass escalating review (spec compliance -> functional -> challenge -> adversarial). Output structured review report with `<trellis:verdict>PASS</trellis:verdict>` or `<trellis:verdict>FIXME</trellis:verdict>`, FIXME items, NOTES, and LEARNINGS. Do NOT modify code - only report findings.
 
-**PLAN**: Research the codebase, understand the scope, and write a plan file to `.trellis/plans/`. Follow the plan format specification provided in your task prompt. Report the file path as `<trellis:plan_path>path</trellis:plan_path>`.
+**PLAN**: Research the codebase, understand the scope, and write a plan file to `.trellis/plans/`. Follow the plan format specification provided in your task prompt. Report the file path as `<trellis:plan_path>path</trellis:plan_path>`. Note: PLAN workers are only spawned in the complex path — standard path plans are drafted inline by the orchestrator.
 
 **FIX**: Address specific FIXME items from a review. Make targeted fixes only - do not refactor or improve beyond what's listed. Atomic commits per fix.

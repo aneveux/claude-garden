@@ -3,6 +3,7 @@
 An agent framework for structured development with Claude Code. Trellis breaks work into plan-implement-review cycles, delegates to specialist agents when configured, and accumulates project knowledge over time.
 
 ```
+─────────────────────────────────────────────
        _ _
       (_\_)
      (__<_{}
@@ -12,6 +13,7 @@ An agent framework for structured development with Claude Code. Trellis breaks w
        \|//
         |/
    ,.,.,|.,.,.
+─────────────────────────────────────────────
 ```
 
 ## Quick Start

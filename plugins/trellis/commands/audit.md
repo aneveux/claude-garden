@@ -170,13 +170,15 @@ Wait for the agent to complete.
 Show findings with the bloom:
 
 ```
+─────────────────────────────────────────────
       ,xXXXXx,
      ,XXXXXXXX,
-     XXXXXXXXXX   Audit Complete: <lens(es)>
+     XXXXXXXXXX   🌸 Audit Complete: <lens(es)>
      `"""XX"""`
          XX       <N> findings (<critical> critical, <warning> warning, <info> info)
          XX
          XX
+─────────────────────────────────────────────
 ```
 
 List critical findings first, then warnings. Info items can be summarized.

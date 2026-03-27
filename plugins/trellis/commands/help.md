@@ -10,6 +10,7 @@ Show available commands and basic usage.
 ## Output
 
 ```
+─────────────────────────────────────────────
        _ _
       (_\_)
      (__<_{}   Trellis - Structured Development
@@ -19,6 +20,7 @@ Show available commands and basic usage.
        \|//
         |/
    ,.,.,|.,.,.
+─────────────────────────────────────────────
 ```
 
 **Commands:**

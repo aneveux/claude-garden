@@ -20,12 +20,15 @@ Read and report the current project state.
 
 4. Check for active plans: Glob `.trellis/plans/*.md` — if the directory doesn't exist yet, skip this step. Otherwise read any plans with status != done/cancelled.
 
+4b. Read `.trellis/BACKLOG.md` if it exists — count open items by severity (critical, warning, normal).
+
 5. Present status with appropriate plant:
 
 If work is active (plan in-progress):
 ```
+─────────────────────────────────────────────
     ,*-.
-    |  |   Trellis Status: <project-name>
+    |  |   🌿 Trellis Status: <project-name>
 ,.  |  |
 | |_|  |   Focus: <current focus>
 `---.  |   Plan: <plan path> (<N/M tasks done>)
@@ -43,13 +46,15 @@ If work is active (plan in-progress):
                - Due: <any lens past its threshold, or "all clear">
 
                Backlog: <N critical, N warning, N normal from .trellis/BACKLOG.md, if file exists>
+─────────────────────────────────────────────
 ```
 
 If idle:
 ```
+─────────────────────────────────────────────
       ,xXXXXx,
      ,XXXXXXXX,
-     XXXXXXXXXX   Trellis Status: <project-name>
+     XXXXXXXXXX   🌳 Trellis Status: <project-name>
      `"""XX"""`
          XX       All clear! No active work.
          XX       Learnings so far: <count>
@@ -63,4 +68,5 @@ If idle:
                   Backlog: <N critical, N warning, N normal from .trellis/BACKLOG.md, if file exists>
 
                   Run /trellis:do <request> to start!
+─────────────────────────────────────────────
 ```

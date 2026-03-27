@@ -50,14 +50,16 @@ Use AskUserQuestion:
 3. Show status:
 
 ```
+─────────────────────────────────────────────
     ,*-.
-    |  |   Resuming Plan #NNN: <title>
+    |  |   🌿 Resuming Plan #NNN: <title>
 ,.  |  |   <done>/<total> tasks complete
 | |_|  | ,.
 `---.  |_| |
     |  .--`
     |  |
     |  |
+─────────────────────────────────────────────
 ```
 
 4. Route based on plan type and remaining work:
@@ -127,8 +129,8 @@ Use AskUserQuestion with Proceed/Cancel options.
 
 Path overrides: `quick:` forces simple, `deep:` forces complex.
 
-Inform the user which path you chose:
-"This looks like a [simple/standard/complex] task. [1-2 sentence reasoning]."
+Inform the user which path you chose (use 🌱 lifecycle emoji):
+"🌱 This looks like a [simple/standard/complex] task. [1-2 sentence reasoning]."
 
 ## Step 3: Execute Path
 
@@ -161,7 +163,7 @@ This step is lightweight — a quick scan, not a deep analysis. Skip if no backl
   c) Abort and keep current progress
   Max 1 automatic retry per worker. On second failure: ask user for manual intervention.
 - **Review finds critical issues after 2 fix cycles**: Present remaining issues. Ask user to fix manually or adjust plan. If they cancel, update plan status to `failed`.
-- **Context running low**: Save state immediately (update plan checkboxes, STATE.md timestamp). Inform user: "Context is running low. Progress saved to STATE.md. Start a fresh session and run /trellis:do to resume."
+- **Context running low**: Save state immediately (update plan checkboxes, STATE.md timestamp). Inform user: "🌿 Context is running low. Progress saved to STATE.md. Start a fresh session and run /trellis:do to resume."
 - **Specialist not found**: Warn user, implement directly without specialist.
 - **`.trellis/` not initialized**: Tell user to run `/trellis:bootstrap` first.
 - **Plan file missing or corrupted**: Inform user. Offer to start fresh or create a new plan for the remaining work.

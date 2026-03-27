@@ -9,7 +9,7 @@ specialists:
 
 models:
   worker: sonnet  # default for all workers (accepts: sonnet, opus, haiku, or any model ID)
-  # Per-role overrides (optional):
+  # Per-role overrides (optional) — keys match worker roles: PLAN, IMPLEMENT, REVIEW, FIX
   # planner: opus
   # implementer: sonnet
   # reviewer: haiku

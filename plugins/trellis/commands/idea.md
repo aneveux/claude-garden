@@ -56,13 +56,15 @@ Append the idea under `### Normal` in the `## Open` section:
 Show the seedling with evaluation:
 
 ```
+─────────────────────────────────────────────
    |
- .'|'.    Idea captured: <title>
+ .'|'.    🌱 Idea captured: <title>
 /.'|\ \
 | /|'.|   Alignment: <summary>
  \ |\/    Complexity: <estimate>
   \|/
    `
+─────────────────────────────────────────────
 ```
 
 If conflicts found, highlight them clearly.
@@ -97,8 +99,9 @@ captured/promoted idea to backlog format under `### Normal`, write to BACKLOG.md
 List all open backlog items grouped by severity, with source attribution:
 
 ```
+─────────────────────────────────────────────
    |
- .'|'.    Backlog (<N> open items)
+ .'|'.    🌱 Backlog (<N> open items)
 /.'|\ \
 | /|'.|
  \ |\/
@@ -118,6 +121,7 @@ List all open backlog items grouped by severity, with source attribution:
    2. ...
 
    Done: (<count> completed)
+─────────────────────────────────────────────
 ```
 
 If no open items: "Backlog is clear! Run `/trellis:audit` to check for issues, or `/trellis:idea <desc>` to capture an idea."

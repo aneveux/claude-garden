@@ -12,7 +12,7 @@
 //     - mode: "auto"  -> injects an auto-trigger directive
 //   - Smart triggering: if committed files match a lens's trigger patterns
 //     and the counter is above 50% of threshold, triggers early
-//   - Debounces: one nudge per session to avoid spam
+//   - Debounces: one nudge-mode reminder per session; auto-triggers can re-fire
 
 const fs = require('fs');
 const path = require('path');

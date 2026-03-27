@@ -4,14 +4,16 @@ Direct edit for small, clear changes (1-2 files, typo, config fix).
 
 Show the stem:
 ```
+─────────────────────────────────────────────
     ,*-.
-    |  |   Quick fix!
+    |  |   🌿 Quick fix!
 ,.  |  |
 | |_|  | ,.
 `---.  |_| |
     |  .--`
     |  |
     |  |
+─────────────────────────────────────────────
 ```
 
 ## Execution
@@ -31,11 +33,13 @@ Show the stem:
    - Append any learnings
 6. Show the tree and report what was done:
 ```
+─────────────────────────────────────────────
       ,xXXXXx,
      ,XXXXXXXX,
-     XXXXXXXXXX   Done!
+     XXXXXXXXXX   🌳 Done!
      `"""XX"""`
          XX
          XX
          XX
+─────────────────────────────────────────────
 ```

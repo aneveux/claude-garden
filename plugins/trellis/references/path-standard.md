@@ -4,13 +4,15 @@ Feature, refactor, or module-level change (3-8 files). Plan -> approve -> implem
 
 Show the seedling:
 ```
+─────────────────────────────────────────────
    |
- .'|'.    Planning...
+ .'|'.    🌱 Planning...
 /.'|\ \
 | /|'.|
  \ |\/
   \|/
    `
+─────────────────────────────────────────────
 ```
 
 ## Planning
@@ -37,13 +39,15 @@ Show the seedling:
 5. Write plan to `.trellis/plans/NNN-<slug>.md` with `status: draft`
 6. Present the plan to the user:
 ```
+─────────────────────────────────────────────
    |        ,*-.
- .'|'.      |  |   Plan #NNN: <title>
+ .'|'.      |  |   🌱 Plan #NNN: <title>
 /.'|\ \  ,. |  |
 | /|'.|  | |_| | ,.
  \ |\/   `---. |_| |
   \|/        | .--`
    `         | |
+─────────────────────────────────────────────
 ```
 
 Show tasks and Done When criteria clearly.
@@ -86,10 +90,12 @@ prompt: |
   <paste these sections from conventions.md (read in step 8):>
   <"Commit Protocol" section>
   <"Learning Protocol" section>
+  <"Specialist Delegation" section>
   <"Pending Decisions Protocol" section>
   <"State Update Protocol" section>
   <"Implementation Integrity" section>
   <"Verification Before Completion" section>
+  <"Visual Identity" section>
 
   ## Specialist
   <if specialist configured>:
@@ -136,18 +142,21 @@ prompt: |
   <paste these sections from conventions.md (read in step 8):>
   <"Review Protocol" section>
   <"Learning Protocol" section>
+  <"Visual Identity" section>
 model: <from trellis.yaml models.reviewer if set, else models.worker, default sonnet>
 ```
 
 17. Show the bloom with review summary:
 ```
+─────────────────────────────────────────────
       ,xXXXXx,
      ,XXXXXXXX,
-     XXXXXXXXXX   Review complete!
+     XXXXXXXXXX   🌸 Review complete!
      `"""XX"""`
          XX
          XX
          XX
+─────────────────────────────────────────────
 ```
 
 18. Process review result — extract verdict from the review output:
@@ -169,6 +178,7 @@ prompt: |
   <"Commit Protocol" section>
   <"Learning Protocol" section>
   <"Verification Before Completion" section>
+  <"Visual Identity" section>
 
   ## Rules
   - Fix ONLY the listed issues. No other changes.
@@ -190,11 +200,13 @@ model: <from trellis.yaml models.fixer if set, else models.worker, default sonne
     - Last: current timestamp
 23. Show the tree:
 ```
+─────────────────────────────────────────────
       ,xXXXXx,
      ,XXXXXXXX,
-     XXXXXXXXXX   All done! Plan #NNN complete.
+     XXXXXXXXXX   🌳 All done! Plan #NNN complete.
      `"""XX"""`
          XX
          XX
          XX
+─────────────────────────────────────────────
 ```
