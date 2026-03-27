@@ -12,7 +12,7 @@ Take what you need, ignore the rest, and don’t be surprised if things evolve.
 | Plugin | Version | Description |
 |--------|---------|-------------|
 | [bark](plugins/bark/) | 2.0.0 | Opinionated Bash development — conventions, patterns, and tool preferences |
-| [trellis](plugins/trellis/) | 2.0.0 | Agent framework for structured development — plan, implement, review, learn |
+| [trellis](plugins/trellis/) | 2.2.0 | Agent framework for structured development — plan, implement, review, learn |
 
 More seeds will appear over time.
 
