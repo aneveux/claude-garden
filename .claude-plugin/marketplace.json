@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Personal Claude Code plugin marketplace",
-    "version": "2.2.0"
+    "version": "2.3.0"
   },
   "plugins": [
     {
@@ -19,6 +19,12 @@
       "name": "trellis",
       "description": "Agent framework for structured development - plan, implement, review, learn",
       "source": "./plugins/trellis",
+      "strict": false
+    },
+    {
+      "name": "vine",
+      "description": "Television (tv) fuzzy finder expertise for terminal workflows and channel creation",
+      "source": "./plugins/vine",
       "strict": false
     }
   ]

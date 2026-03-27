@@ -13,6 +13,7 @@ Take what you need, ignore the rest, and don’t be surprised if things evolve.
 |--------|---------|-------------|
 | [bark](plugins/bark/) | 2.0.0 | Opinionated Bash development — conventions, patterns, and tool preferences |
 | [trellis](plugins/trellis/) | 2.2.0 | Agent framework for structured development — plan, implement, review, learn |
+| [vine](plugins/vine/) | 1.0.0 | Television (tv) fuzzy finder expertise — channels, templates, shell integration |
 
 More seeds will appear over time.
 
@@ -31,6 +32,7 @@ Pick what you want to grow locally:
 ```
 /plugin install bark@claude-garden
 /plugin install trellis@claude-garden
+/plugin install vine@claude-garden
 ```
 
 ---
@@ -50,6 +52,10 @@ plugins/
     references/
     templates/
     hooks/
+  vine/
+    skills/
+      vine/
+        references/
 ```
 
 ---
