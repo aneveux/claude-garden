@@ -22,7 +22,8 @@ LEARNING RULES:
   - YYYY-MM-DD | <concise discovery>
 - Good learnings: conventions, gotchas, env requirements, patterns, tool quirks
 - Bad learnings: obvious things, task-specific details that won't recur
-- Do NOT skip this step. Knowledge accumulation is a core framework goal.
+- This is how trellis builds institutional memory — learnings from this session
+  prevent repeated debugging in future sessions.
 ```
 
 ## 3. Review Protocol
@@ -87,15 +88,17 @@ SPECIALIST DELEGATION:
   5. Commit with trellis commit protocol
   6. Log learnings
 - If no specialist configured: implement directly
-- The specialist handles CODE QUALITY. You handle PROTOCOL (commits, learning, criteria).
+- The specialist handles code quality. You handle protocol (commits, learning, criteria).
 
 Domain detection — match the task's primary files against specialist keys in trellis.yaml:
+  Priority: explicit mention in task > 80%+ of files match > fallback to direct implementation
   - bash: .sh, .bash files, Makefile targets, or explicit "bash/shell" in task
   - java: .java, .kt files, pom.xml, build.gradle, or explicit "java/kotlin" in task
   - go: .go files, go.mod, or explicit "go/golang" in task
   - python: .py files, or explicit "python" in task
   - For any other specialist key: match file extensions or explicit mentions in task
-  - Default: implement directly (no specialist needed)
+  - Multiple domains or unclear: implement directly (specialists add value for domain
+    clarity, not ambiguity)
 ```
 
 ## 5. Pending Decisions Protocol
@@ -110,8 +113,9 @@ PENDING DECISIONS:
   - "Should validation errors return 400 or 422?"
   - "Test DB: SQLite for speed or Postgres for parity?"
 - Remove a decision from the list after it's been resolved
-- Do NOT block on pending decisions. Make a reasonable default choice,
-  implement it, and log the decision so the user can revisit.
+- Make a reasonable default choice, implement it, and log the decision so the
+  user can revisit. Blocking on decisions stalls the entire pipeline — a logged
+  default that can be changed later is better than no progress.
 ```
 
 ## 6. State Update Protocol
@@ -129,21 +133,13 @@ STATE UPDATE:
 
 ```
 IMPLEMENTATION INTEGRITY:
-The most common failure mode in AI-assisted development isn't writing bad code --
-it's skipping steps that feel unnecessary in the moment but matter in production.
-Watch for these patterns in yourself:
+The review worker catches shortcuts — but late catches waste a full fix/review
+cycle. Watch for these patterns:
 
-- "I'll add the test after" -- you won't. Write the test when the context is fresh.
-- "This is too simple to fail" -- the simple cases are where assumptions hide.
-- "The user probably meant X" -- if the plan says Y, implement Y. Log the
-  ambiguity as a pending decision rather than silently reinterpreting.
-- "I'll clean this up later" -- later doesn't exist in a single-session agent.
-  Ship it clean or flag it explicitly.
-- "This edge case won't happen" -- if you can name it, it can happen. Handle it
-  or document why it's out of scope.
-
-The review worker will catch shortcuts -- but catching them late wastes a full
-fix/review cycle. Catching them yourself saves everyone time.
+- Plan says Y but you think user meant X → implement Y, log ambiguity as pending decision
+- "Too simple to test" → simple cases are where assumptions hide
+- "I'll clean up later" → no later in a single-session agent. Ship clean or flag it.
+- "This edge case won't happen" → if you can name it, handle it or document why it's out of scope
 ```
 
 ## 8. Verification Before Completion
@@ -151,16 +147,10 @@ fix/review cycle. Catching them yourself saves everyone time.
 ```
 VERIFICATION BEFORE COMPLETION:
 Before declaring any task done, produce fresh evidence that it works:
-
-1. Run the tests (or the relevant subset). Read the output. Don't assume green.
-2. Check each done_when criterion against actual state -- run the command, read
-   the file, hit the endpoint. Whatever the criterion requires.
-3. If a criterion can't be verified (e.g., "deploys correctly" in a dev env),
-   note it as unverified in your state update rather than silently claiming it.
-
-Why: The review worker re-verifies everything, but if the implementer ships
-broken code, the fix/re-review cycle costs 2x the tokens and time of getting it
-right the first time. Self-verification is the cheapest quality gate in the system.
+1. Run tests (or relevant subset). Read output. Don't assume green.
+2. Check each done_when criterion against actual state — run the command, read the file.
+3. If a criterion can't be verified, note it as unverified rather than silently claiming it.
+Self-verification saves a full fix/re-review cycle if something is broken.
 ```
 
 ## 9. Stewardship Protocol
@@ -233,3 +223,37 @@ AUDIT RULES (for AUDIT workers spawned by /trellis:audit):
 - The report format is specified by the orchestrator. Follow it exactly.
 - Log learnings to STATE.md (same Learning Protocol as other workers).
 ```
+
+## Machine-Parseable Output Tags
+
+Workers produce structured outputs that orchestrators parse via regex. Tags must appear on their own line.
+
+| Output | Tag | Expected values |
+|--------|-----|-----------------|
+| Review verdict | `<trellis:verdict>PASS\|FIXME</trellis:verdict>` | PASS or FIXME |
+| Plan file path | `<trellis:plan_path>path/to/file.md</trellis:plan_path>` | Plan file path |
+
+If a tag is missing from worker output, treat as FIXME (for verdict) or re-glob `.trellis/plans/*.md` (for plan path).
+
+## Injection Map
+
+Which sections to paste into each worker's spawn prompt. Inject only what the role
+needs — extra sections waste context tokens without helping the worker.
+
+| Section | IMPLEMENT | REVIEW | FIX | PLAN | AUDIT |
+|---------|-----------|--------|-----|------|-------|
+| §1 Commit Protocol | yes | — | yes | — | — |
+| §2 Learning Protocol | yes | yes | yes | — | yes |
+| §3 Review Protocol | — | yes | — | — | — |
+| §4 Specialist Delegation | yes | — | — | — | — |
+| §5 Pending Decisions | yes | — | — | — | — |
+| §6 State Update | yes | — | — | — | — |
+| §7 Implementation Integrity | yes | — | — | — | — |
+| §8 Verification | yes | — | yes | — | — |
+| §9 Stewardship | — | — | — | yes | — |
+| §10 Backlog | — | — | — | — | — |
+| §11 Audit | — | — | — | — | yes |
+
+Notes:
+- §10 Backlog is handled by the orchestrator (do.md), not injected into workers
+- PLAN workers get §9 for stewardship checks; the plan format is injected separately

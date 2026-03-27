@@ -62,11 +62,21 @@ wave_count: 3
 - Tests cover: happy path, expired token, invalid token
 ```
 
+## Optional: Notes
+
+When stewardship documents (VISION.md, DECISIONS.md) are loaded and misalignment is found, planners add a Notes section to flag it:
+
+```markdown
+## Notes
+- Misalignment: <principle or ADR> — work may conflict with <vision/decision>
+- Recommendation: <adjust approach, override decision, or proceed with awareness>
+```
+
 ## Rules
 
 - `status` field is updated by the trellis command as work progresses
 - Task checkboxes `[ ]` / `[x]` updated by workers after each commit
 - Wave numbering determines execution order in complex path
 - Tasks within a wave are independent (can parallelize)
-- `Done When` items must be observable and testable - no subjective criteria
+- `Done When` items must be observable and testable — no subjective criteria
 - `Must Haves` (complex only) specify structural constraints for verification

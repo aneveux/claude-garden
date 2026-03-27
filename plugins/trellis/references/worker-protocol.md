@@ -9,14 +9,19 @@ Default model: sonnet
 
 All protocols are defined in `conventions.md` (the single source of truth). The orchestrator (`do.md`) reads conventions.md and pastes the relevant sections into each worker's spawn prompt. The sections are:
 
-1. **Commit Protocol** (all roles)
-2. **Learning Protocol** (all roles)
-3. **Pending Decisions Protocol** (all roles)
-4. **State Update Protocol** (all roles)
-5. **Implementation Integrity** (implement/fix roles)
-6. **Verification Before Completion** (implement/fix roles)
-7. **Specialist Delegation Protocol** (implement role only)
-8. **Review Protocol** (review role only)
+1. **Commit Protocol** (implement, fix)
+2. **Learning Protocol** (implement, review, fix, audit)
+3. **Review Protocol** (review only)
+4. **Specialist Delegation** (implement only)
+5. **Pending Decisions** (implement only)
+6. **State Update** (implement only)
+7. **Implementation Integrity** (implement only)
+8. **Verification Before Completion** (implement, fix)
+9. **Stewardship** (plan only)
+10. **Backlog** (orchestrator only — not injected into workers)
+11. **Audit** (audit only)
+
+The **Injection Map** in `conventions.md` is the authoritative source for which sections each role receives. Numbering above matches conventions.md section numbers.
 
 ## Role-Specific Behavior
 

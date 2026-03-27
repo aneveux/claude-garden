@@ -180,7 +180,6 @@ plugins/trellis/
     plan-format.md     # Plan file specification
     worker-protocol.md # Worker role documentation
     audit-lenses.md    # Audit lens definitions (6 lenses)
-    personality.md     # ASCII art + tone guide
   templates/
     trellis.yaml.template
     STATE.md.template

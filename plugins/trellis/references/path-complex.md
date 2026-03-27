@@ -60,6 +60,11 @@ prompt: |
   ## Research Findings
   <from research phase, if any>
 
+  ## Project Direction
+  <paste VISION.md contents if loaded, otherwise omit>
+  <paste DECISIONS.md contents if loaded, otherwise omit>
+  Flag any misalignment with vision principles or decision conflicts in a ## Notes section.
+
   ## Plan Format
   <paste full format section from plan-format.md>
 
@@ -87,18 +92,27 @@ model: <from trellis.yaml models.planner if set, else models.worker, default son
 ## Execution
 
 7. Read conventions reference: Glob `**/trellis/references/conventions.md`, then read it.
-8. Execute wave by wave:
+8. Read `.trellis/trellis.yaml` for specialist config
+9. Determine if a specialist applies using §4 (Specialist Delegation) from conventions.md.
+10. Record the current commit hash as the implementation baseline:
+    Run `git rev-parse HEAD` and save the result as `BASELINE_HASH`.
+11. Execute wave by wave:
    For each wave:
    - Identify independent task groups within the wave
    - If tasks are truly independent (different files, no shared imports):
      Spawn parallel implement workers (one per task group)
      Each worker gets its subset of tasks + done_when + commit/learning protocols
-   - If tasks have potential file overlap, or you're unsure:
+     Include specialist delegation in each worker's prompt if applicable (same as path-standard step 12)
+   - If tasks touch overlapping files, share imports, or you're unsure:
      Default to worktree isolation — the merge cost is low, the conflict risk is not.
      Spawn workers with `isolation: "worktree"` for safety.
      When worktree workers complete, their changes are on separate branches.
      Merge each branch sequentially: `git merge <branch>`.
-     If a merge conflict occurs, do NOT auto-resolve — present the conflict diff to the user and ask for guidance on how to resolve it.
+     If a merge conflict occurs:
+       - Show the conflict diff to the user
+       - Ask: "How should I resolve this?" with options:
+         a) User describes the resolution — apply it, complete the merge
+         b) Abort this wave — revert merge, mark wave as failed, ask user to adjust plan
    - Wait for all workers in wave to complete
    - Verify wave tasks are done (check plan checkboxes)
    - Show garden for parallel waves:
@@ -118,4 +132,4 @@ model: <from trellis.yaml models.planner if set, else models.worker, default son
 
 ## Review and Completion
 
-After all waves complete, follow the **Review** and **Completion** sections from `references/path-standard.md` (Glob `**/trellis/references/path-standard.md`). The review/fix cycle and completion flow are identical — gather changed files, spawn review worker, handle verdict, update state.
+After all waves complete, follow path-standard.md (Glob `**/trellis/references/path-standard.md`) starting from the **Review** section. The review/fix cycle and completion flow are identical — gather changed files using `git diff --name-only <BASELINE_HASH>..HEAD` (from step 10), spawn review worker, handle verdict, update state.

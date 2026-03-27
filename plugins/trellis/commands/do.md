@@ -155,9 +155,13 @@ This step is lightweight — a quick scan, not a deep analysis. Skip if no backl
 
 ## Error Handling
 
-- **Worker fails or times out**: Update plan status to `failed`. Report to user. Offer to retry or adjust plan. Progress is saved via plan checkboxes and STATE.md — they can run `/trellis:do` to resume.
+- **Worker fails or times out**: Update plan status to `failed`. Report error to user. Offer:
+  a) Retry the same worker (once — for transient failures)
+  b) Adjust plan and retry
+  c) Abort and keep current progress
+  Max 1 automatic retry per worker. On second failure: ask user for manual intervention.
 - **Review finds critical issues after 2 fix cycles**: Present remaining issues. Ask user to fix manually or adjust plan. If they cancel, update plan status to `failed`.
-- **Context running low**: Save state immediately. Inform user: "Context is running low. Progress saved to STATE.md. Start a fresh session and run /trellis:status to continue."
+- **Context running low**: Save state immediately (update plan checkboxes, STATE.md timestamp). Inform user: "Context is running low. Progress saved to STATE.md. Start a fresh session and run /trellis:do to resume."
 - **Specialist not found**: Warn user, implement directly without specialist.
 - **`.trellis/` not initialized**: Tell user to run `/trellis:bootstrap` first.
-- **Active work in STATE.md**: Present status, ask user whether to resume or start new.
+- **Plan file missing or corrupted**: Inform user. Offer to start fresh or create a new plan for the remaining work.

@@ -69,9 +69,7 @@ Use AskUserQuestion:
 
 8. Find and read the conventions reference: Glob `**/trellis/references/conventions.md`, then read it. You will paste relevant sections from this file into each worker's spawn prompt.
 9. Read `.trellis/trellis.yaml` for specialist config and worker model
-10. Determine if a specialist applies:
-    - Check specialists config in trellis.yaml
-    - Match task domain to specialist (e.g., .sh/.bash files -> bash specialist)
+10. Determine if a specialist applies using §4 (Specialist Delegation) from conventions.md.
 11. Record the current commit hash as the implementation baseline:
     Run `git rev-parse HEAD` and save the result as `BASELINE_HASH`. You'll use this after implementation to find all changed files.
 12. Prepare and spawn the implement worker using the Agent tool:
