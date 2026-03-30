@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Personal Claude Code plugin marketplace",
-    "version": "2.4.0"
+    "version": "2.5.0"
   },
   "plugins": [
     {
@@ -25,6 +25,12 @@
       "name": "vine",
       "description": "Television (tv) fuzzy finder expertise for terminal workflows and channel creation",
       "source": "./plugins/vine",
+      "strict": false
+    },
+    {
+      "name": "graft",
+      "description": "Jenkins plugin development with expert-level agents for implementing, reviewing, and testing plugins. Use whenever working on Jenkins hpi/jpi plugins, Pipeline steps, Jelly views, or preparing PRs for jenkinsci.",
+      "source": "./plugins/graft",
       "strict": false
     }
   ]
