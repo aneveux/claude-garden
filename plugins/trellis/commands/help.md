@@ -37,12 +37,14 @@ Show available commands and basic usage.
 
 **Path prefixes** (optional with `/trellis:do`):
 - `quick:` — force simple path (direct edit, no agents)
+- `plan:` — force standard path (plan + implement + review)
 - `deep:` — force complex path (research + parallel waves)
 
 **Examples:**
 ```
 /trellis:do fix the typo in config.yaml
 /trellis:do add input validation to the signup form
+/trellis:do plan: refactor the auth module with proper tests
 /trellis:do deep: redesign the authentication module
 /trellis:audit consistency
 /trellis:audit security

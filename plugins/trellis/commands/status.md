@@ -17,6 +17,10 @@ Read and report the current project state.
 
 3b. Read `.trellis/.audit-tracker.json` if it exists
 3c. Read stewardship config from trellis.yaml
+3d. Read `.trellis/metrics.json` if it exists — compute summary stats:
+    - Total tasks completed (by path: simple/standard/complex)
+    - First-pass review rate: tasks where review_verdict == "pass" / tasks where review_verdict is "pass" or "fixme"
+    - Average agents per task
 
 4. Check for active plans: Glob `.trellis/plans/*.md` — if the directory doesn't exist yet, skip this step. Otherwise read any plans with status != done/cancelled.
 
@@ -46,6 +50,10 @@ If work is active (plan in-progress):
                - Due: <any lens past its threshold, or "all clear">
 
                Backlog: <N critical, N warning, N normal from .trellis/BACKLOG.md, if file exists>
+
+               Metrics: <N tasks (S simple, T standard, C complex)>
+               - First-pass review rate: <X%>
+               - Avg agents/task: <N.N>
 ─────────────────────────────────────────────
 ```
 
@@ -66,6 +74,10 @@ If idle:
                   - Due: <any lens past its threshold, or "all clear">
 
                   Backlog: <N critical, N warning, N normal from .trellis/BACKLOG.md, if file exists>
+
+                  Metrics: <N tasks (S simple, T standard, C complex)>
+                  - First-pass review rate: <X%>
+                  - Avg agents/task: <N.N>
 
                   Run /trellis:do <request> to start!
 ─────────────────────────────────────────────

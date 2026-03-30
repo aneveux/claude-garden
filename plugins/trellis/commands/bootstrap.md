@@ -134,6 +134,13 @@ Note: if `stewardship.architecture` is not configured (commented out in trellis.
    }
    ```
 
+9b. Create `.trellis/metrics.json`:
+    ```json
+    {
+      "tasks": []
+    }
+    ```
+
 10. Read `BACKLOG.md.template`: Glob `**/trellis/templates/BACKLOG.md.template`
     Write it to `.trellis/BACKLOG.md`.
 
@@ -147,6 +154,7 @@ Note: if `stewardship.architecture` is not configured (commented out in trellis.
 | |_|  |   .trellis/trellis.yaml  - project config
 `---.  |   .trellis/STATE.md     - state & learnings
     |  |   .trellis/BACKLOG.md   - unified task backlog
+    |  |   .trellis/metrics.json - task metrics
     |  |
     |  |   Stewardship docs created. Run /trellis:audit to check project health anytime.
            Run /trellis:do <request> to start growing!

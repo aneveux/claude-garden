@@ -86,7 +86,7 @@ Use AskUserQuestion:
 ## Step 1: Parse Request
 
 The user's request follows `/trellis:do`. Parse it for:
-- **Path override**: `quick:` prefix -> force simple. `deep:` prefix -> force complex.
+- **Path override**: `quick:` prefix -> force simple. `plan:` prefix -> force standard. `deep:` prefix -> force complex.
 - **Natural language request**: the actual task description
 
 If the task description is empty (user ran `/trellis:do` with no argument):
@@ -123,11 +123,11 @@ Use AskUserQuestion with Proceed/Cancel options.
 
 | Signal | Path |
 |--------|------|
-| 1-2 files, clear fix, typo, config change | **Simple** |
-| 3-8 files, clear feature, refactor, module | **Standard** |
-| 8+ files, cross-cutting, unfamiliar domain, redesign | **Complex** |
+| 1-5 files, clear fix, feature, config change | **Simple** |
+| 6+ files, bounded scope (same package/module tree) | **Standard** |
+| Spans unrelated subsystems, unfamiliar domain, redesign | **Complex** |
 
-Path overrides: `quick:` forces simple, `deep:` forces complex.
+Path overrides: `quick:` forces simple, `plan:` forces standard, `deep:` forces complex.
 
 Inform the user which path you chose (use 🌱 lifecycle emoji):
 "🌱 This looks like a [simple/standard/complex] task. [1-2 sentence reasoning]."
@@ -154,6 +154,30 @@ After work is completed (path execution finished, review passed):
 4. If the completed task originated from a backlog item, make sure that item is marked done
 
 This step is lightweight — a quick scan, not a deep analysis. Skip if no backlog exists.
+
+## Step 5: Log Metrics
+
+After work is completed (any path), log task metrics to `.trellis/metrics.json`:
+
+1. Read `.trellis/metrics.json` (create with `{"tasks":[]}` if missing)
+2. Append a task entry:
+   ```json
+   {
+     "plan_id": "<NNN or null for simple>",
+     "title": "<task description, max 80 chars>",
+     "path": "simple|standard|complex",
+     "agents_spawned": <count>,
+     "review_verdict": "pass|fixme|none",
+     "fix_cycles": <count>,
+     "completed": "YYYY-MM-DD"
+   }
+   ```
+3. Write the updated file back
+
+Agent counting:
+- Simple path: 0 agents (direct edit)
+- Standard path: count implement + review + fix workers spawned
+- Complex path: count research + plan + implement (per wave) + review + fix workers
 
 ## Error Handling
 

@@ -1,6 +1,6 @@
 # Complex Path
 
-Cross-cutting change, redesign, or unfamiliar domain (8+ files). Research -> plan with waves -> parallel workers -> review.
+Cross-cutting change spanning unrelated subsystems, redesign, or unfamiliar domain. Research -> plan with waves -> parallel workers -> review.
 
 Show the sprout:
 ```

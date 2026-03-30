@@ -256,6 +256,28 @@ NON-ART MESSAGES — when outputting text without ASCII art:
   - One emoji per message block is enough — don't overdo it
 ```
 
+## 13. Metrics Protocol
+
+```
+METRICS RULES:
+- After completing any task (simple, standard, or complex), the orchestrator
+  logs a metrics entry to .trellis/metrics.json. Workers don't touch this file.
+- The orchestrator (do.md) handles all metrics logging in Step 5.
+- Metrics tracked per task:
+  - plan_id: plan number (null for simple path)
+  - title: short task description
+  - path: simple | standard | complex
+  - agents_spawned: number of Agent tool calls made for this task
+  - review_verdict: pass | fixme | none
+    - pass: review ran and passed on first attempt
+    - fixme: review found issues (fix cycles were needed)
+    - none: no review ran (simple path)
+  - fix_cycles: how many fix/re-review rounds were needed (0 if review passed)
+  - completed: ISO date
+- The metrics file is a JSON object with a "tasks" array. Append, never overwrite.
+- /trellis:status reads this file and computes summary stats.
+```
+
 ## Machine-Parseable Output Tags
 
 Workers produce structured outputs that orchestrators parse via regex. Tags must appear on their own line.
@@ -286,8 +308,9 @@ needs — extra sections waste context tokens without helping the worker.
 | §10 Backlog | — | — | — | — | — |
 | §11 Audit | — | — | — | — | yes |
 | §12 Visual Identity | yes | yes | yes | yes | yes |
+| §13 Metrics | — | — | — | — | — |
 
 Notes:
-- §10 Backlog is handled by orchestrator commands (do.md, audit.md, idea.md, retro.md), not injected into workers
+- §10 Backlog and §13 Metrics are handled by orchestrator commands, not injected into workers
 - PLAN workers get §9 for stewardship checks; the plan format is injected separately. The PLAN role is used in the complex path only — standard path plans are drafted inline by the orchestrator.
 - §12 Visual Identity is injected into ALL workers so every output carries plant personality

@@ -43,11 +43,11 @@ Bootstrap creates `.trellis/` with config, state, and direction documents. Two q
 
 | Path | When | What Happens |
 |------|------|-------------|
-| **Simple** | 1-2 files, clear fix | Direct edit + commit. No agents. |
-| **Standard** | 3-8 files, feature/refactor | Plan -> approve -> implement worker -> review worker |
-| **Complex** | 8+ files, cross-cutting | Research -> plan with waves -> parallel workers -> review |
+| **Simple** | 1-5 files, clear change | Direct edit + commit (1-3 commits). No agents. Inline self-review for 3+ files. |
+| **Standard** | 6+ files, bounded scope | Plan -> approve -> implement worker -> review |
+| **Complex** | Spans unrelated subsystems, redesign | Research -> plan with waves -> parallel workers -> review |
 
-Force a path with prefixes: `quick:` (simple) or `deep:` (complex).
+Force a path with prefixes: `quick:` (simple), `plan:` (standard), or `deep:` (complex).
 
 Standard and complex paths always go through review. The review runs four passes (spec compliance, functional, challenge, adversarial) with increasing skepticism. If issues are found, a fix worker addresses them (max 2 fix/review cycles).
 
@@ -94,6 +94,16 @@ Every worker asks itself after each task: "Did I discover anything non-obvious a
 ```
 
 Run `/trellis:retro` periodically to review learnings. Patterns that show up repeatedly get promoted to your project's `CLAUDE.md`, where future sessions pick them up automatically.
+
+## Metrics
+
+Every completed task logs metrics to `.trellis/metrics.json`: which path was used, how many agents were spawned, whether review passed or needed fixes, and how many fix cycles were needed. `/trellis:status` computes summary stats from this data:
+
+- Tasks by path (simple/standard/complex)
+- First-pass review rate (how often review passes without fixes)
+- Average agents per task
+
+This answers the question: "Is trellis worth the agent cost?" If your first-pass review rate is 95%, your implement workers are solid. If your simple path handles 80% of tasks, the framework is earning its keep with minimal overhead.
 
 ## Stewardship
 
@@ -205,6 +215,7 @@ All trellis state lives in `.trellis/`:
   trellis.yaml          # Project config
   STATE.md             # Current focus, progress, learnings
   BACKLOG.md           # Unified task backlog (ideas + audit findings)
+  metrics.json         # Task metrics (path, agents, review verdicts)
   .audit-tracker.json  # Commit counters per audit lens
   plans/
     001-user-auth.md   # Plan files (created by /trellis:do)

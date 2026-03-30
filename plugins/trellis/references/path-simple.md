@@ -1,6 +1,6 @@
 # Simple Path
 
-Direct edit for small, clear changes (1-2 files, typo, config fix).
+Direct edit for clear changes (1-5 files). No agents, no plan file — you do it yourself.
 
 Show the stem:
 ```
@@ -26,12 +26,19 @@ Show the stem:
    - Any obvious issues?
 4. Commit following the commit protocol:
    - Check CLAUDE.md for commit conventions
-   - One commit with appropriate message
-5. Update `.trellis/STATE.md`:
+   - One commit per logical change (may be 1-3 commits for multi-file work)
+5. **For 3+ file changes**: do an inline review pass before declaring done.
+   This is NOT an agent spawn — review your own changes:
+   - `git diff` the changes since you started
+   - Check: did you miss any file that should have changed?
+   - Check: any import/reference that now points to something that moved?
+   - Check: do tests still pass?
+   If you find issues, fix them and commit.
+6. Update `.trellis/STATE.md`:
    - Set Focus to describe what was done
    - Update Last timestamp
    - Append any learnings
-6. Show the tree and report what was done:
+7. Show the tree and report what was done:
 ```
 ─────────────────────────────────────────────
       ,xXXXXx,

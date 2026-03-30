@@ -1,6 +1,6 @@
 # Standard Path
 
-Feature, refactor, or module-level change (3-8 files). Plan -> approve -> implement -> review.
+Multi-module feature, refactor, or large change (6+ files, bounded scope — same package or module tree). Plan -> approve -> implement -> review.
 
 Show the seedling:
 ```
