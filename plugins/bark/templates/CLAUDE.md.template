@@ -52,7 +52,7 @@ All code must follow these mandatory conventions:
    - When modifying code, reformat the entire touched function
    - Use `shellcheck` for linting
 
-For complete style guide: Load skill `bash-style-guide` (549 lines, §1-11)
+For complete style guide: Load skill `bash-style-guide` (548 lines, §1-11)
 
 ---
 
@@ -66,24 +66,37 @@ For complete style guide: Load skill `bash-style-guide` (549 lines, §1-11)
    - Selection: `gum choose` (single/multi-select), `gum confirm` (yes/no)
    - Spinners: `gum spin --title "Processing..." -- command`
 
-2. **fzf**: Fuzzy selection from lists
-   - Basic: `selected=$(ls | fzf)`
-   - Preview pane: `fzf --preview 'cat {}' --preview-window=right:60%`
-   - Multi-select: `fzf --multi`
+2. **tv (television)**: Fuzzy selection from lists (see vine skill for channel patterns)
+   - From stdin: `selected=$(ls | tv)`
+   - Built-in channels: `tv files`, `tv git-log`, `tv env`
 
-3. **jq**: JSON processing (never parse JSON with grep/sed/awk)
+3. **zoxide**: Smart directory jumping (frecency-based)
+   - Jump: `z projects myapp`
+   - Interactive: `zi`
+   - In scripts: `dir=$(zoxide query projects myapp)`
+
+4. **sesh**: Project-based tmux session management
+   - Connect: `sesh connect myproject`
+   - Interactive picker: `sesh connect "$(sesh list | tv)"`
+
+5. **jira** (ankitpokhrel/jira-cli): Jira from the terminal
+   - List mine: `jira issue list -a"$(jira me)"`
+   - View: `jira issue view PROJ-123`
+   - Move: `jira issue move PROJ-123 "In Progress"`
+
+6. **jq**: JSON processing (never parse JSON with grep/sed/awk)
    - Extract field: `name=$(echo "$json" | jq -r '.name')`
    - Array processing: `ids=$(echo "$json" | jq -r '.[].id')`
    - Build JSON: `jq -n --arg name "$name" '{name: $name}'`
 
-4. **gh**: GitHub operations (PR creation, issue management, API queries)
+7. **gh**: GitHub operations (PR creation, issue management, API queries)
    - Create PR: `gh pr create --title "..." --body "..."`
    - API call: `gh api repos/:owner/:repo/issues`
 
-5. **pass**: Secret management (never hardcode secrets)
+8. **pass**: Secret management (never hardcode secrets)
    - Get secret: `token=$(pass show api/github/token)`
 
-For complete tool patterns and recipes: Load skill `bash-tools` (902 lines, §1-6)
+For complete tool patterns and recipes: Load skill `bash-tools`
 
 ---
 
@@ -186,7 +199,7 @@ Advanced patterns for production-quality shell development. Use when the problem
    trap cleanup EXIT INT TERM
    ```
 
-For complete patterns with rationale and gotchas: Load skill `bash-patterns` (1,294 lines, §1-8)
+For complete patterns with rationale and gotchas: Load skill `bash-patterns` (1,293 lines, §1-8)
 
 ---
 
@@ -242,8 +255,8 @@ For complete project setup guidance: Load skill `bash-project-setup` (505 lines,
 This template encodes conventions from bark v2.0 (2026-03-26). If your plugin version is newer, consider regenerating this file or loading the updated skills directly.
 
 **Skill versions:**
-- bash-style-guide: 1.0.0 (549 lines)
-- bash-tools: 1.0.0 (902 lines)
+- bash-style-guide: 1.0.0 (548 lines)
+- bash-tools: 1.0.0 (1,042 lines)
 - bash-testing: 1.0.0 (1,062 lines)
-- bash-patterns: 1.0.0 (1,294 lines)
+- bash-patterns: 1.0.0 (1,293 lines)
 - bash-project-setup: 1.0.0 (505 lines)

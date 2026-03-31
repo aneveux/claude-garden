@@ -531,7 +531,7 @@ Bash functions traditionally return values via `echo` and command substitution: 
 
 **Problem 1: Interactive functions (TTY capture)**
 
-When a function uses interactive tools like `gum`, `fzf`, or `read`, command substitution captures stdin. The interactive tool can't access the terminal and fails with "not a tty" or hangs.
+When a function uses interactive tools like `gum`, `tv`, or `read`, command substitution captures stdin. The interactive tool can't access the terminal and fails with "not a tty" or hangs.
 
 ```bash
 # BROKEN - gum can't access terminal
@@ -560,7 +560,7 @@ Benefits:
 
 ### When to Use
 
-**Interactive scenario:** Functions that call `gum write`, `gum input`, `fzf`, `read`, or any tool requiring TTY access.
+**Interactive scenario:** Functions that call `gum write`, `gum input`, `tv`, `read`, or any tool requiring TTY access.
 
 **Non-interactive scenario:** Functions that need to return multiple values or complex data structures (arrays, associative arrays).
 
@@ -568,7 +568,7 @@ Benefits:
 
 ### Complete Example
 
-**Example 1: Interactive use (gum/fzf/read)**
+**Example 1: Interactive use (gum/tv/read)**
 
 For gum-specific interactive patterns, see bash-tools skill. This example shows the general nameref pattern.
 
@@ -590,15 +590,14 @@ get_multiline_input() {
 	return 0
 }
 
-# Function that needs TTY for fzf
+# Function that needs TTY for tv
 select_from_list() {
-	local prompt="$1"
-	local -n result_var="$2"
-	shift 2
+	local -n result_var="$1"
+	shift
 	local options=("$@")
 
 	local selected
-	if ! selected=$(printf "%s\n" "${options[@]}" | fzf --prompt "$prompt "); then
+	if ! selected=$(printf "%s\n" "${options[@]}" | tv); then
 		return 1
 	fi
 
@@ -617,7 +616,7 @@ main() {
 
 	local options=("feature" "bugfix" "refactor")
 	local task_type
-	if ! select_from_list "Task type" task_type "${options[@]}"; then
+	if ! select_from_list task_type "${options[@]}"; then
 		log_error "Selection cancelled"
 		return 1
 	fi

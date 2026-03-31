@@ -518,11 +518,11 @@ echo "mocked"
 EOF
 	chmod +x bin/gum
 
-	cat > bin/fzf << 'EOF'
+	cat > bin/tv << 'EOF'
 #!/usr/bin/env bash
 echo "selected"
 EOF
-	chmod +x bin/fzf
+	chmod +x bin/tv
 }
 
 @test "with multiple mocks" {
@@ -548,7 +548,7 @@ setup() {
 
 **Rule:** Code checks for CI mode: `if [[ "${USE_GUM:-1}" == "0" ]] || [[ -n "${CI:-}" ]]; then`
 
-**Rationale:** Interactive tools like gum, fzf require TTY and hang in CI. CI mode env vars enable non-interactive fallbacks. Tests must set these to be CI-compatible.
+**Rationale:** Interactive tools like gum, tv require TTY and hang in CI. CI mode env vars enable non-interactive fallbacks. Tests must set these to be CI-compatible.
 
 ### Environment Variables
 

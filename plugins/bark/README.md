@@ -23,13 +23,13 @@ Comprehensive knowledge base encoding Antoine's bash development methodology.
 
 | Skill                   | Purpose                              | Lines |
 |-------------------------|--------------------------------------|-------|
-| `bash-style-guide`      | Style conventions and standards      | 549   |
-| `bash-tools`            | Tool ecosystem and usage patterns    | 902   |
+| `bash-style-guide`      | Style conventions and standards      | 548   |
+| `bash-tools`            | Tool ecosystem and usage patterns    | 1042  |
 | `bash-testing`          | Testing methodology with bats        | 1062  |
-| `bash-patterns`         | Common patterns and solutions        | 1294  |
+| `bash-patterns`         | Common patterns and solutions        | 1293  |
 | `bash-project-setup`    | Project architecture decisions       | 505   |
 
-**Total:** 4,312 lines of distilled knowledge
+**Total:** 4,450 lines of distilled knowledge
 
 Skills are loaded on-demand for context-specific guidance.
 

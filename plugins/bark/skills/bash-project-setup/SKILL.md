@@ -55,7 +55,7 @@ Your project is **complex** if it has any of:
 - **3+ subcommands** (e.g., `tool add`, `tool list`, `tool remove`)
 - **Shared state between operations** (JSON database, cache, session data)
 - **Concurrent access requirements** (multiple processes writing to same data)
-- **Multiple external tool integrations** (git + gh + jq + fzf all in one tool)
+- **Multiple external tool integrations** (git + gh + jq + tv all in one tool)
 
 ### Size Signals
 
@@ -470,7 +470,7 @@ test/test_database.bats → tests lib/database.sh
 - **bash-patterns** §2 — Exec-based dispatch pattern (used in modular dispatcher)
 - **bash-patterns** §3 — Wrapper loop prevention (used in dispatcher)
 - **bash-style-guide** — All conventions apply (naming, strict mode, formatting)
-- **bash-tools** — Tool usage patterns for gum, fzf, jq, etc.
+- **bash-tools** — Tool usage patterns for gum, tv, jq, zoxide, sesh, jira, etc.
 
 **Templates:**
 - Makefile template: See `templates/Makefile.template` for standard targets (check, lint, test, format, format-check, install, help)

@@ -4,8 +4,9 @@ version: 1.0.0
 description: |
   Preferred CLI tools and integration patterns for bash development. Apply when
   writing bash scripts that need interactive prompts, fuzzy search, terminal
-  management, JSON processing, GitHub operations, or secret management. Covers
-  gum, fzf, tmux, jq, gh, and pass with usage patterns and recipes.
+  management, JSON processing, GitHub operations, secret management, directory
+  navigation, or issue tracking. Covers gum, tv, tmux, jq, gh, pass, zoxide,
+  sesh, and jira with usage patterns and recipes.
 allowed-tools:
   - Read
   - Write
@@ -193,101 +194,77 @@ echo "$details"
 - **Data output for piping** - Use plain echo/printf when output is consumed by another program
 - **Performance-critical loops** - gum has startup overhead, don't call in tight loops
 
-## fzf
+## tv (television)
 
-`fzf` is a command-line fuzzy finder for interactive selection.
+`tv` is a fast, Rust-based fuzzy finder built around **channels** — TOML configs that define searchable data sources with preview and actions. It replaces fzf as the preferred interactive picker.
+
+For comprehensive tv patterns, channel creation, custom TOML configs, and shell integration, load the **vine** skill. Below are the essentials for bash scripting.
 
 ### When to Use
 
 - Selecting from lists of items (files, commits, options)
 - Filtering large datasets interactively
 - File picking with preview
-- Command history search
+- Building reusable selection channels
 
 ### Key Patterns
 
 **1. Basic selection from piped input**
 
 ```bash
-# Select from list
-selected=$(ls | fzf)
+# Select from piped input (stdin channel)
+selected=$(ls | tv)
 
 # Select file from git
-file=$(git ls-files | fzf --prompt="Select file: ")
+file=$(git ls-files | tv)
 
 # Select from array
 options=("option1" "option2" "option3")
-choice=$(printf '%s\n' "${options[@]}" | fzf)
+choice=$(printf '%s\n' "${options[@]}" | tv)
 ```
 
-**2. Formatted display with delimiter**
+**2. Built-in channels**
+
+tv ships with channels for common sources — no piping required:
 
 ```bash
-# Display formatted data, return specific field
-selected=$(git log --oneline | fzf --delimiter=' ' --with-nth='2..' | cut -d' ' -f1)
+# File picker
+file=$(tv files)
 
-# Issue picker (display title, return number)
-issue=$(gh issue list --json number,title --jq '.[] | "\(.number)\t\(.title)"' | \
-	fzf --delimiter='\t' --with-nth=2 --prompt="Select issue: " | \
-	cut -f1)
+# Git log picker
+commit=$(tv git-log)
+
+# Environment variables
+var=$(tv env)
 ```
 
-**Rationale:** `--delimiter` and `--with-nth` let you show formatted data while extracting the ID/key you need.
+**3. Nameref pattern for TTY access**
 
-**3. Preview pane**
-
-```bash
-# File selection with preview
-file=$(find . -type f | fzf --preview 'cat {}' --preview-window=right:50%)
-
-# With better preview handling
-file=$(fd --type f | fzf \
-	--preview 'bat --color=always --style=numbers --line-range=:500 {}' \
-	--preview-window=right:60%)
-
-# Git commit selection with diff preview
-commit=$(git log --oneline | fzf \
-	--preview 'git show --color=always {1}' \
-	--preview-window=right:60%)
-```
-
-**4. Multi-select**
+Like any interactive tool, tv needs TTY access. Use nameref to avoid subshell capture (see bash-patterns §5 for full rationale):
 
 ```bash
-# Select multiple files
-files=$(ls | fzf --multi)
+select_from_list() {
+	local -n result_var="$1"
+	shift
+	local options=("$@")
 
-# With custom prompt and header
-selected=$(find . -name "*.sh" | fzf \
-	--multi \
-	--prompt="Select scripts: " \
-	--header="Tab to select, Enter to confirm")
+	local selected
+	if ! selected=$(printf "%s\n" "${options[@]}" | tv); then
+		return 1
+	fi
 
-# Process each selected item
-while IFS= read -r file; do
-	log_info "Processing: $file"
-	process_file "$file"
-done <<< "$selected"
-```
+	result_var="$selected"
+	return 0
+}
 
-**5. Custom keybindings**
-
-```bash
-# Execute commands on selection
-file=$(fzf \
-	--bind 'ctrl-d:execute(rm {})' \
-	--bind 'ctrl-e:execute(vim {})' \
-	--header='CTRL-D: delete, CTRL-E: edit')
-
-# Preview with toggle
-fzf --preview 'cat {}' --bind 'ctrl-p:toggle-preview'
+# Usage: select_from_list chosen "feature" "bugfix" "refactor"
 ```
 
 ### Don't Use When
 
 - **Non-interactive context** - Scripts without TTY
 - **Few items** - For 2-3 options, use `gum choose` instead (simpler, faster)
-- **Performance-critical** - fzf startup overhead matters in tight loops
+- **Custom channels needed** - Load vine skill for TOML channel patterns
 
 ## tmux
 
@@ -733,11 +710,157 @@ rm -f "$temp_key"
 - **Values already in environment** - If `$VAR` is already set, no need to fetch from pass
 - **Pass not installed** - Fall back to environment variables or prompt user
 
+## zoxide
+
+`zoxide` is a smarter `cd` that learns your directory habits. It tracks visit frequency and recency to jump to directories by partial name.
+
+### When to Use
+
+- Navigating between project directories in scripts
+- Setting up workspace automation
+- Any script that needs to resolve a frequently-visited path
+
+### Key Patterns
+
+**1. Directory jumping**
+
+```bash
+# Jump to best match for "projects"
+z projects
+
+# Jump to best match for "projects" containing "myapp"
+z projects myapp
+
+# Interactive selection (uses tv)
+zi
+```
+
+**2. In scripts**
+
+```bash
+# Get path without changing directory
+project_dir=$(zoxide query projects myapp)
+
+# Add directory to zoxide database
+zoxide add /path/to/important/dir
+
+# Resolve and cd
+cd "$(zoxide query "$project")" || return 1
+```
+
+### Don't Use When
+
+- **First-time directories** - zoxide needs prior visits, use full paths
+- **CI/CD** - No zoxide database in ephemeral environments
+- **Deterministic scripts** - Use explicit paths when reproducibility matters
+
+## sesh
+
+`sesh` is a tmux session manager that connects directories to named sessions. It replaces manual tmux session creation with project-based session handling.
+
+### When to Use
+
+- Project-based tmux session management
+- Quick switching between project workspaces
+- Automating development environment setup
+
+### Key Patterns
+
+**1. Session management**
+
+```bash
+# Connect to or create session for current directory
+sesh connect .
+
+# Connect to named project
+sesh connect myproject
+
+# List sessions
+sesh list
+
+# Interactive session picker (pairs well with tv)
+sesh connect "$(sesh list | tv)"
+```
+
+**2. In scripts**
+
+```bash
+# Setup workspace script
+setup_workspace() {
+	local project="$1"
+	local project_dir
+	project_dir=$(zoxide query "$project") || return 1
+
+	sesh connect "$project_dir"
+}
+```
+
+### Don't Use When
+
+- **No tmux** - sesh requires tmux
+- **Simple one-off commands** - Overhead not worth it for quick tasks
+- **Custom pane layouts** - Use tmux directly for complex split configurations
+
+## jira
+
+`jira` ([ankitpokhrel/jira-cli](https://github.com/ankitpokhrel/jira-cli)) is a Go-based CLI for interacting with Jira from the terminal.
+
+### When to Use
+
+- Viewing and creating issues from scripts
+- Sprint management automation
+- Integrating Jira workflow into dev tools
+
+### Key Patterns
+
+**1. Issue operations**
+
+```bash
+# List issues assigned to me
+jira issue list -a"$(jira me)"
+
+# View issue details
+jira issue view PROJ-123
+
+# Create issue
+jira issue create -tBug -s"Login fails on Safari" -pHigh
+
+# Move issue to In Progress
+jira issue move PROJ-123 "In Progress"
+```
+
+**2. Sprint operations**
+
+```bash
+# List current sprint issues
+jira sprint list --current
+
+# Add issue to sprint
+jira sprint add SPRINT_ID PROJ-123
+```
+
+**3. Integration with other tools**
+
+```bash
+# Interactive issue picker
+issue=$(jira issue list -a"$(jira me)" --plain --no-headers | \
+	tv | awk '{print $2}')
+
+# Create branch from issue key
+git checkout -b "feature/$issue"
+```
+
+### Don't Use When
+
+- **GitHub Issues** - Use `gh` instead
+- **No Jira instance** - Obviously
+- **Batch API automation** - Consider Jira REST API directly for heavy operations
+
 ## Tool Recipes
 
 These patterns show how to combine tools for powerful workflows.
 
-### Recipe 1: jq + fzf (Interactive JSON Selection)
+### Recipe 1: jq + tv (Interactive JSON Selection)
 
 ```bash
 # Select GitHub issue interactively
@@ -748,8 +871,7 @@ select_issue() {
 	local issue_number
 	issue_number=$(echo "$issue_json" | \
 		jq -r '.[] | "\(.number)\t\(.title)"' | \
-		fzf --delimiter='\t' --with-nth=2 --prompt="Select issue: " | \
-		cut -f1)
+		tv | cut -f1)
 
 	if [[ -z "$issue_number" ]]; then
 		return 1
@@ -826,16 +948,13 @@ init_api_client() {
 }
 ```
 
-### Recipe 5: fzf + Preview (File Selection)
+### Recipe 5: tv Files (File Selection)
 
 ```bash
-# Select and edit file with preview
+# Select and edit file with tv's built-in files channel
 edit_file() {
 	local file
-	file=$(fd --type f --exclude '.git' | \
-		fzf --preview 'bat --color=always --style=numbers {}' \
-		    --preview-window=right:60% \
-		    --prompt="Select file to edit: ")
+	file=$(tv files)
 
 	if [[ -n "$file" ]]; then
 		"${EDITOR:-vim}" "$file"
@@ -843,33 +962,48 @@ edit_file() {
 }
 ```
 
-### Recipe 6: tmux + gum (Interactive Workspace)
+### Recipe 6: sesh + zoxide (Smart Workspace)
 
 ```bash
-# Create development workspace interactively
-create_workspace() {
-	local project
-	project=$(gum input --placeholder "Project name")
+# Jump to project and connect tmux session
+open_project() {
+	local project="$1"
+	local project_dir
+	project_dir=$(zoxide query "$project") || {
+		log_error "Unknown project: $project"
+		return 1
+	}
 
-	if [[ -z "$project" ]]; then
-		log_error "Project name required"
+	sesh connect "$project_dir"
+}
+
+# Interactive project picker
+pick_project() {
+	local session
+	session=$(sesh list | tv)
+
+	if [[ -n "$session" ]]; then
+		sesh connect "$session"
+	fi
+}
+```
+
+### Recipe 7: jira + tv (Interactive Issue Workflow)
+
+```bash
+# Pick an issue and start working on it
+start_work() {
+	local issue
+	issue=$(jira issue list -a"$(jira me)" --plain --no-headers | \
+		tv | awk '{print $2}')
+
+	if [[ -z "$issue" ]]; then
 		return 1
 	fi
 
-	if tmux has-session -t "$project" 2>/dev/null; then
-		log_warn "Session already exists, attaching..."
-		tmux attach-session -t "$project"
-		return
-	fi
-
-	gum spin --title "Setting up workspace..." -- bash -c "
-		tmux new-session -s '$project' -n 'code' -d
-		tmux split-window -h -t '$project:code'
-		tmux new-window -t '$project' -n 'git'
-	"
-
-	log_success "Workspace created"
-	tmux attach-session -t "$project"
+	jira issue move "$issue" "In Progress"
+	git checkout -b "feature/$issue"
+	log_success "Working on $issue"
 }
 ```
 
@@ -880,13 +1014,15 @@ This table shows what **not** to build manually. Use the tools instead.
 | Problem | Don't Build | Use Instead |
 |---------|-------------|-------------|
 | Interactive prompts | Custom read loops with validation | `gum input`, `gum write`, `gum choose` |
-| Fuzzy search | grep + loop | `fzf` with preview |
+| Fuzzy search | grep + loop | `tv` with channels (see vine skill) |
 | JSON parsing | sed/awk/grep hacks | `jq` for all JSON operations |
 | GitHub API | curl + manual auth + token management | `gh api` with automatic auth |
 | Spinner/progress | Manual animation loops with sleep | `gum spin` |
 | Logging | echo with colors and manual stderr | `gum log --level` |
 | Colored output | Manual ANSI escape codes | `gum style` with borders |
-| Session management | Custom terminal setup | `tmux` session and pane management |
+| Directory jumping | cd + manual bookmarks | `zoxide` with frecency ranking |
+| Session management | Custom tmux session scripts | `sesh` for project-based sessions |
+| Issue tracking | curl + Jira REST API | `jira` CLI for issue/sprint ops |
 | Secret storage | Plain text files or env vars | `pass` with GPG encryption |
 
 ## Summary
@@ -899,4 +1035,8 @@ This table shows what **not** to build manually. Use the tools instead.
 4. **jq for all JSON** - Don't parse JSON with grep/sed/awk
 5. **gh for all GitHub operations** - Auth is handled, API is simpler
 6. **pass for secrets** - Never hardcode credentials
-7. **Combine tools for powerful workflows** - jq + fzf, gh + jq, gum + tmux, etc.
+7. **tv for fuzzy selection** - Channel-based architecture, see vine skill for depth
+8. **zoxide for navigation** - Frecency-based directory jumping
+9. **sesh for sessions** - Project-based tmux session management
+10. **jira for issue tracking** - CLI-native Jira workflow
+11. **Combine tools for powerful workflows** - jq + tv, gh + jq, sesh + zoxide, jira + tv, etc.

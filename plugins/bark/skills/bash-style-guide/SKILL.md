@@ -82,7 +82,7 @@ QUICKFLOW_CONFIG_LOADED=1
 # Dependencies:
 #   - gum (interactive components)
 #   - gh (GitHub CLI)
-#   - fzf (fuzzy finding)
+#   - tv (fuzzy finding)
 #######################################
 
 set -euo pipefail
@@ -104,7 +104,6 @@ export QUICKFLOW_ROOT
 
 **Example - Library file header:**
 ```bash
-#!/usr/bin/env bash
 #######################################
 # Logging utilities for quickflow
 #
@@ -295,7 +294,7 @@ if [[ $# -lt 1 ]]; then
 fi
 
 if ! command -v gum &>/dev/null; then
-	gum log --level error "gum command not found"
+	echo "ERROR: gum command not found" >&2
 	exit 127  # Command not found
 fi
 
