@@ -15,6 +15,7 @@ Take what you need, ignore the rest, and don’t be surprised if things evolve.
 | [trellis](plugins/trellis/) | 2.2.0 | Agent framework for structured development — plan, implement, review, learn |
 | [vine](plugins/vine/) | 1.0.0 | Television (tv) fuzzy finder expertise — channels, templates, shell integration |
 | [graft](plugins/graft/) | 1.0.0 | Jenkins plugin development — agents, review patterns, and deep API knowledge |
+| [thorn](plugins/thorn/) | 1.0.0 | Local code review processing — find and act on localreview.nvim comments |
 
 More seeds will appear over time.
 
@@ -35,6 +36,7 @@ Pick what you want to grow locally:
 /plugin install trellis@claude-garden
 /plugin install vine@claude-garden
 /plugin install graft@claude-garden
+/plugin install thorn@claude-garden
 ```
 
 ---
@@ -68,6 +70,10 @@ plugins/
       jenkins-ui/
         references/
       jenkins-reviews/
+  thorn/
+    skills/
+      local-reviews/
+    commands/
 ```
 
 ---

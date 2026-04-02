@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Personal Claude Code plugin marketplace",
-    "version": "2.6.1"
+    "version": "2.7.0"
   },
   "plugins": [
     {
@@ -31,6 +31,12 @@
       "name": "graft",
       "description": "Jenkins plugin development with expert-level agents for implementing, reviewing, and testing plugins. Use whenever working on Jenkins hpi/jpi plugins, Pipeline steps, Jelly views, or preparing PRs for jenkinsci.",
       "source": "./plugins/graft",
+      "strict": false
+    },
+    {
+      "name": "thorn",
+      "description": "Local code review processing for localreview.nvim. Discovers, parses, and acts on review comments left as hidden .reviews.json files.",
+      "source": "./plugins/thorn",
       "strict": false
     }
   ]
