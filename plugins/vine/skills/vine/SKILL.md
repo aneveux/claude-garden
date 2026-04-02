@@ -64,6 +64,10 @@ tv --source-command "fd -t f" --preview-command "bat -n --color=always '{}'"
 # Piping
 git log --oneline | tv
 
+# Source behavior flags (note: these are --ansi, NOT --source-ansi)
+tv --source-command "cmd" --ansi          # Parse ANSI color codes from source output
+tv --source-command "cmd" --no-sort       # Preserve original order (skip fuzzy ranking)
+
 # Scripting flags
 tv files --select-1             # Auto-select if single match
 tv files --take-1               # Always pick first result
