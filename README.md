@@ -16,6 +16,7 @@ Take what you need, ignore the rest, and don’t be surprised if things evolve.
 | [vine](plugins/vine/) | 1.0.0 | Television (tv) fuzzy finder expertise — channels, templates, shell integration |
 | [graft](plugins/graft/) | 1.0.0 | Jenkins plugin development — agents, review patterns, and deep API knowledge |
 | [thorn](plugins/thorn/) | 1.0.0 | Local code review processing — find and act on localreview.nvim comments |
+| [bloom](plugins/bloom/) | 1.1.0 | Terminal presentations with presenterm — brainstorm, structure, build, and review slide decks |
 
 More seeds will appear over time.
 
@@ -37,6 +38,7 @@ Pick what you want to grow locally:
 /plugin install vine@claude-garden
 /plugin install graft@claude-garden
 /plugin install thorn@claude-garden
+/plugin install bloom@claude-garden
 ```
 
 ---
@@ -73,6 +75,11 @@ plugins/
   thorn/
     skills/
       local-reviews/
+    commands/
+  bloom/
+    skills/
+      bloom/
+        references/
     commands/
 ```
 

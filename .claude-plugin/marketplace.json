@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Personal Claude Code plugin marketplace",
-    "version": "2.7.0"
+    "version": "2.8.0"
   },
   "plugins": [
     {
@@ -37,6 +37,12 @@
       "name": "thorn",
       "description": "Local code review processing for localreview.nvim. Discovers, parses, and acts on review comments left as hidden .reviews.json files.",
       "source": "./plugins/thorn",
+      "strict": false
+    },
+    {
+      "name": "bloom",
+      "description": "Terminal presentations with presenterm — brainstorm, structure, build, and review slide decks from the CLI",
+      "source": "./plugins/bloom",
       "strict": false
     }
   ]
