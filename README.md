@@ -17,6 +17,7 @@ Take what you need, ignore the rest, and don’t be surprised if things evolve.
 | [graft](plugins/graft/) | 1.0.0 | Jenkins plugin development — agents, review patterns, and deep API knowledge |
 | [thorn](plugins/thorn/) | 1.0.0 | Local code review processing — find and act on localreview.nvim comments |
 | [bloom](plugins/bloom/) | 1.1.0 | Terminal presentations with presenterm — brainstorm, structure, build, and review slide decks |
+| [seed](plugins/seed/) | 1.0.0 | Prompt cultivation — transform rough ideas into structured, technique-informed prompts |
 
 More seeds will appear over time.
 
@@ -39,6 +40,7 @@ Pick what you want to grow locally:
 /plugin install graft@claude-garden
 /plugin install thorn@claude-garden
 /plugin install bloom@claude-garden
+/plugin install seed@claude-garden
 ```
 
 ---
@@ -81,6 +83,16 @@ plugins/
       bloom/
         references/
     commands/
+  seed/
+    agents/
+    skills/
+      prompt-cultivation/
+        references/
+    commands/
+    references/
+      herbarium/
+        specimens/
+      plots/
 ```
 
 ---
