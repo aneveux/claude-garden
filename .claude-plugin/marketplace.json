@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Personal Claude Code plugin marketplace",
-    "version": "2.8.0"
+    "version": "2.9.0"
   },
   "plugins": [
     {
@@ -43,6 +43,12 @@
       "name": "bloom",
       "description": "Terminal presentations with presenterm — brainstorm, structure, build, and review slide decks from the CLI",
       "source": "./plugins/bloom",
+      "strict": false
+    },
+    {
+      "name": "seed",
+      "description": "Prompt cultivation — transform rough ideas into structured, technique-informed prompts through interactive refinement",
+      "source": "./plugins/seed",
       "strict": false
     }
   ]
