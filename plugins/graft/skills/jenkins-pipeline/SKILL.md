@@ -19,6 +19,7 @@ allowed-tools:
   - Bash
   - Grep
   - Glob
+disable-model-invocation: true
 ---
 
 # Jenkins Pipeline Step Implementation

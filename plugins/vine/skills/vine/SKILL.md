@@ -17,6 +17,7 @@ allowed-tools:
   - Bash
   - Grep
   - Glob
+disable-model-invocation: true
 ---
 
 # Vine — Television (tv) Expertise

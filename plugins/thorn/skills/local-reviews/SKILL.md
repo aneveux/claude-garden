@@ -16,6 +16,7 @@ allowed-tools:
   - Bash
   - Grep
   - Glob
+disable-model-invocation: true
 ---
 
 # Local Reviews — localreview.nvim

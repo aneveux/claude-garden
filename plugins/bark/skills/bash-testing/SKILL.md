@@ -14,6 +14,7 @@ allowed-tools:
   - Bash
   - Grep
   - Glob
+disable-model-invocation: true
 ---
 
 # Bash Testing
