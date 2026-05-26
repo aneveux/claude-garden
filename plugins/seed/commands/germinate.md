@@ -29,7 +29,9 @@ Store the raw input as the `original_seed` — you'll need it for the compare st
 
 Read the `prompt-cultivation` skill from `skills/prompt-cultivation/SKILL.md` in this plugin for technique knowledge.
 
-Perform a silent diagnosis across these dimensions (do not show this to the user yet):
+**If the seed has `source: seed:dig` or `source: seed:harden` frontmatter**: this is a pre-explored spec from `/seed:dig` and/or stress-tested via `/seed:harden`. The Problem, Requirements, Constraints, and Success Criteria are already defined through adversarial discussion. Skip Step 3 (clarifying questions) entirely — go straight to Step 2 for template matching and Step 4 for technique selection. Use the spec's "Technique Hints" section as your starting recommendation. If `source: seed:harden` is present, the spec has passed fresh-context validation — you can trust it has no hidden assumptions or ambiguity.
+
+**Otherwise**, perform a silent diagnosis across these dimensions (do not show this to the user yet):
 - **Intent clarity**: Can you unambiguously identify what the user wants the prompt to do?
 - **Target model**: Is it clear which AI or context this prompt targets?
 - **Missing constraints**: Format? Length? Audience? Tone? Scope?

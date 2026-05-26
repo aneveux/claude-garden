@@ -16,20 +16,24 @@ for common prompt patterns, and a growing herbarium of curated before/after exam
 ## Quick Start
 
 ```
+/seed:dig "I need something for handling code reviews but I'm not sure what approach to take"
 /seed:germinate "review my PR for security issues"
 ```
 
-The germinate command walks you through:
-1. Analyzing your rough prompt for gaps
-2. Asking targeted clarifying questions
-3. Recommending prompting techniques
-4. Building a polished, structured prompt
-5. Iterating until you're satisfied
+**Don't know what you need yet?** Start with `/seed:dig` — an adversarial discussion that helps you discover requirements before writing anything.
+
+**Have a spec but want to stress-test it?** Use `/seed:harden` — fresh-context agents validate your spec survives contact with reality.
+
+**Know what you want?** Go straight to `/seed:germinate` — interactive refinement in under 2 minutes.
+
+The full pipeline: dig (discover) → harden (validate) → germinate (refine) → herbarium (preserve).
 
 ## Commands
 
 | Command | Purpose |
 |---------|---------|
+| `/seed:dig` | Adversarial prompt discovery — figure out what you need through discussion |
+| `/seed:harden` | Multi-pass validation — stress-test specs with fresh-context agents |
 | `/seed:germinate` | Interactive prompt refinement — the main workflow |
 | `/seed:catalog` | Browse templates, herbarium specimens, and techniques |
 | `/seed:yield` | View cultivation metrics and usage statistics |
@@ -94,6 +98,8 @@ View with `/seed:yield`.
 | Concept | Garden Term | Description |
 |---------|-------------|-------------|
 | Raw user input | **Seed** | The rough idea or intent |
+| Discovery phase | **Dig** | Unearthing what's actually needed through discussion |
+| Stress testing | **Harden** | Exposing seedlings to elements before transplanting |
 | Refinement process | **Germinate** | Interactive questioning + technique application |
 | Finished prompt | **Bloom** | The cultivated, ready-to-use prompt |
 | Technique library | **Soil** | The knowledge substrate that nourishes prompts |

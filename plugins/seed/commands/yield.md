@@ -28,11 +28,13 @@ Present a formatted report with these sections:
 ━━━━━━━━━━━━━━━━━━━
 
 Prompts cultivated:  47
+Discovery sessions:   8
 Herbarium specimens: 12
 Most used template:  code-review (14 times)
 ```
 
 - `Prompts cultivated` = `total_cultivations` from the JSON
+- `Discovery sessions` = `total_digs` from the JSON (omit line if 0 or missing)
 - `Herbarium specimens` = count files in `references/herbarium/specimens/` in this plugin using `ls | wc -l`
 - `Most used template` = highest value in `template_counts`
 
