@@ -49,7 +49,9 @@ Bootstrap creates `.trellis/` with config, state, and direction documents. Two q
 
 Force a path with prefixes: `quick:` (simple), `plan:` (standard), or `deep:` (complex).
 
-Standard and complex paths always go through review. The review runs four passes (spec compliance, functional, challenge, adversarial) with increasing skepticism. If issues are found, a fix worker addresses them (max 2 fix/review cycles).
+Standard and complex paths always go through review. The review runs four passes (spec compliance, functional, challenge, adversarial) with increasing skepticism. If issues are found, a fix worker addresses them (max 2 fix/review cycles). After 2 failed cycles, structured recovery kicks in: accept with tech debt, rollback to baseline, or fix manually and re-review.
+
+Before spawning workers, the orchestrator runs a pre-implementation validation check — verifying file paths exist, flagging ambiguous task descriptions, and catching implicit assumptions that would force the worker to guess.
 
 ## Configuration
 
@@ -82,6 +84,19 @@ specialists:
 ```
 
 With this config, tasks involving `.sh` files or bash scripts get routed to the bark developer agent.
+
+## Worker Autonomy
+
+Implement workers follow graduated deviation rules when things go wrong:
+
+| Level | Action | Example |
+|-------|--------|---------|
+| 1 — Auto-fix | Fix silently | Test you broke, missing import from your refactor |
+| 2 — Fix and log | Fix + add learning | Pre-existing broken test your change exposed |
+| 3 — Log only | Note as pending decision | Adjacent code worth refactoring (scope creep) |
+| 4 — Stop | Ask user | Architectural changes, unrelated failures, security |
+
+Budget: max 2 auto-fix attempts per task. Third failure escalates to level 4 regardless.
 
 ## Learning System
 
@@ -166,7 +181,7 @@ stewardship:
 
 Trellis includes three hooks:
 
-- `context-monitor.js` (PostToolUse) warns when remaining context drops below 35% and 25%, so you can wrap up and continue in a fresh session.
+- `context-monitor.js` (PostToolUse) warns when remaining context drops below 35% and 25%, so you can wrap up and continue in a fresh session. The orchestrator also monitors context health heuristically between worker spawns — if the session has been heavy (3+ workers), it offers to checkpoint and resume fresh.
 - `audit-nudge.js` (PostToolUse) counts git commits and nudges when audit thresholds are reached. Security audits auto-trigger; others nudge only.
 - `session-save.js` (Stop) updates the `Last:` timestamp in STATE.md when a session ends.
 

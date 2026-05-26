@@ -278,6 +278,43 @@ METRICS RULES:
 - /trellis:status reads this file and computes summary stats.
 ```
 
+## 14. Deviation Protocol
+
+```
+DEVIATION RULES (graduated response to implementation surprises):
+
+When something unexpected happens during implementation, respond proportionally:
+
+LEVEL 1 — AUTO-FIX (no permission needed):
+  - Test failures caused by YOUR changes (you broke it, you fix it)
+  - Missing imports or broken references from YOUR refactoring
+  - Typos, syntax errors, linting failures in YOUR code
+  Why: these are consequences of your own work, not scope creep.
+
+LEVEL 2 — FIX AND LOG (fix it, but note it as a learning):
+  - Pre-existing broken tests that your changes exposed
+  - Missing dev dependencies needed for YOUR work to run
+  - Configuration gaps (missing env vars, test fixtures, build config)
+  Why: legitimate blockers worth fixing, but future sessions should
+  know about them. Log to STATE.md Learnings.
+
+LEVEL 3 — LOG AND CONTINUE (don't fix, note as pending decision):
+  - Questionable existing patterns you'd like to improve
+  - Adjacent code that would benefit from the same refactor
+  - Missing features your code could use but doesn't require
+  Why: tempting, but this is scope creep. Log it, move on.
+
+LEVEL 4 — STOP AND REPORT (ask the orchestrator/user):
+  - Architectural changes not in the plan (new DB table, service, API)
+  - Test failures in UNRELATED code you didn't touch
+  - Security concerns in existing code you discovered
+  - Anything requiring access or credentials you don't have
+  Why: these decisions belong to the user, not you.
+
+Budget: max 2 auto-fix attempts per task (levels 1-2 combined).
+On the 3rd failure, escalate to LEVEL 4 regardless.
+```
+
 ## Machine-Parseable Output Tags
 
 Workers produce structured outputs that orchestrators parse via regex. Tags must appear on their own line.
@@ -309,8 +346,10 @@ needs — extra sections waste context tokens without helping the worker.
 | §11 Audit | — | — | — | — | yes |
 | §12 Visual Identity | yes | yes | yes | yes | yes |
 | §13 Metrics | — | — | — | — | — |
+| §14 Deviation | yes | — | — | — | — |
 
 Notes:
 - §10 Backlog and §13 Metrics are handled by orchestrator commands, not injected into workers
 - PLAN workers get §9 for stewardship checks; the plan format is injected separately. The PLAN role is used in the complex path only — standard path plans are drafted inline by the orchestrator.
 - §12 Visual Identity is injected into ALL workers so every output carries plant personality
+- §14 Deviation gives implement workers graduated autonomy rules for handling surprises without blocking on every hiccup

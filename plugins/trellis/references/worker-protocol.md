@@ -20,11 +20,11 @@ All protocols are defined in `conventions.md` (the single source of truth). The 
 9. **Stewardship** (plan only)
 10. **Backlog** (orchestrator only — not injected into workers)
 11. **Audit** (audit only)
+12. **Visual Identity** (all roles) — plant emoji prefixes and ASCII art framing
 13. **Metrics** (orchestrator only — not injected into workers)
+14. **Deviation Protocol** (implement only) — graduated autonomy for handling surprises
 
 The **Injection Map** in `conventions.md` is the authoritative source for which sections each role receives. Numbering above matches conventions.md section numbers.
-
-12. **Visual Identity** (all roles) — plant emoji prefixes and ASCII art framing
 
 ## Role-Specific Behavior
 

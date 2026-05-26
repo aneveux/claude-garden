@@ -140,6 +140,24 @@ Read the appropriate path reference file and follow its instructions:
 - **Standard**: Glob `**/trellis/references/path-standard.md`, read and execute
 - **Complex**: Glob `**/trellis/references/path-complex.md`, read and execute
 
+## Context Health (applies throughout path execution)
+
+Between worker spawns (after any worker completes, before spawning the next):
+
+1. If a "TRELLIS CONTEXT WARNING" or "TRELLIS CONTEXT CRITICAL" message appeared
+   in recent tool outputs: the hook has fired. Follow its guidance — finish
+   current commit, save state, inform user.
+
+2. If no hook is configured but the session has been heavy (3+ workers spawned,
+   or you've processed many large file reads): proactively checkpoint.
+   - Update STATE.md with current progress
+   - Update plan checkboxes for completed tasks
+   - Ask user: "This session has used significant context. Continue or save and resume fresh?"
+   Use AskUserQuestion with "Continue" / "Fresh session" options.
+   Fresh session: inform user to run `/trellis:do` to resume from checkpoint.
+
+A fresh context reviewing code produces better results than a fatigued one.
+
 ## Step 4: Post-Completion Backlog Check
 
 After work is completed (path execution finished, review passed):
@@ -186,7 +204,7 @@ Agent counting:
   b) Adjust plan and retry
   c) Abort and keep current progress
   Max 1 automatic retry per worker. On second failure: ask user for manual intervention.
-- **Review finds critical issues after 2 fix cycles**: Present remaining issues. Ask user to fix manually or adjust plan. If they cancel, update plan status to `failed`.
+- **Review finds critical issues after 2 fix cycles**: Follow the structured recovery flow in path-standard.md step 19 (Accept with debt / Rollback / Manual fix).
 - **Context running low**: Save state immediately (update plan checkboxes, STATE.md timestamp). Inform user: "🌿 Context is running low. Progress saved to STATE.md. Start a fresh session and run /trellis:do to resume."
 - **Specialist not found**: Warn user, implement directly without specialist.
 - **`.trellis/` not initialized**: Tell user to run `/trellis:bootstrap` first.

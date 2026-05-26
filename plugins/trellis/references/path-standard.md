@@ -76,6 +76,15 @@ Use AskUserQuestion:
 10. Determine if a specialist applies using §4 (Specialist Delegation) from conventions.md.
 11. Record the current commit hash as the implementation baseline:
     Run `git rev-parse HEAD` and save the result as `BASELINE_HASH`. You'll use this after implementation to find all changed files.
+11b. Pre-spawn validation — quick inline sanity check before spawning the worker:
+    - Re-read the plan file (it may have been written several messages ago)
+    - Check for:
+      - Ambiguous task descriptions (could be interpreted multiple ways)
+      - File paths that don't exist (quick glob to verify)
+      - Implicit assumptions not captured in Done When criteria
+    - If issues found: flag them to the user before spawning. Don't block on
+      cosmetic concerns — only flag things that would cause the worker to guess.
+    - If clean: proceed without commentary.
 12. Prepare and spawn the implement worker using the Agent tool:
 
 ```
@@ -95,6 +104,7 @@ prompt: |
   <"State Update Protocol" section>
   <"Implementation Integrity" section>
   <"Verification Before Completion" section>
+  <"Deviation Protocol" section>
   <"Visual Identity" section>
 
   ## Specialist
@@ -187,7 +197,30 @@ model: <from trellis.yaml models.fixer if set, else models.worker, default sonne
 ```
 
 19. After fix worker: spawn another review worker (max 2 fix/review cycles total)
-    - If still FIXME after 2 cycles: present remaining issues to user, ask for guidance
+    - If PASS: continue to Completion
+    - If still FIXME after 2 cycles: escalate with structured recovery options.
+
+    Show remaining issues, then present options:
+
+    Use AskUserQuestion:
+    - question: "Review found issues that 2 fix cycles couldn't resolve. How to proceed?"
+    - header: "Recovery"
+    - options:
+      - label: "Accept with debt"
+        description: "Commit as-is, log remaining issues to BACKLOG.md"
+      - label: "Rollback"
+        description: "Reset to pre-implementation state (BASELINE_HASH)"
+      - label: "Manual fix"
+        description: "I'll fix these myself, then re-run review"
+
+    Handle response:
+    - **Accept with debt**: Continue to Completion. Append remaining FIXME items
+      to .trellis/BACKLOG.md as warnings with source `review:<plan-id>`.
+    - **Rollback**: Run `git reset --hard <BASELINE_HASH>`. Update plan status
+      to `failed`. Set STATE.md Focus to idle. Inform user work was rolled back.
+    - **Manual fix**: Tell user which files/lines need attention. Wait for them
+      to say done. Spawn review worker (doesn't count toward 2-cycle limit since
+      human fixed it). If PASS: continue. If FIXME: re-present options.
 
 ## Completion
 
