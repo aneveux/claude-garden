@@ -38,8 +38,10 @@ PASS 1 - SPEC COMPLIANCE:
   Question: "Does the implementation match what was planned?"
 
 PASS 2 - FUNCTIONAL:
-  Run tests. Check imports. Verify behavior against done_when criteria.
-  Question: "Does it work as specified?"
+  Check the <trellis:evidence> blocks in the worker's output. For each done_when
+  criterion: is there an evidence block? Does it show result="pass"?
+  For any missing evidence or result="fail": run the check yourself to confirm.
+  Question: "Does the evidence show it works as specified?"
 
 PASS 3 - CHALLENGE:
   Question assumptions. Look for edge cases. Check error handling.
@@ -146,11 +148,25 @@ cycle. Watch for these patterns:
 
 ```
 VERIFICATION BEFORE COMPLETION:
-Before declaring any task done, produce fresh evidence that it works:
-1. Run tests (or relevant subset). Read output. Don't assume green.
-2. Check each done_when criterion against actual state — run the command, read the file.
-3. If a criterion can't be verified, note it as unverified rather than silently claiming it.
-Self-verification saves a full fix/re-review cycle if something is broken.
+Before declaring any task done, produce fresh evidence that it works.
+For each done_when criterion, verify it and emit an evidence block:
+
+  <trellis:evidence criterion="<criterion text, max 60 chars>">
+  <command>the command or check you ran</command>
+  <result>pass | fail | unverified</result>
+  <output>relevant excerpt (≤5 lines)</output>
+  </trellis:evidence>
+
+Rules:
+1. One evidence block per done_when criterion — don't bundle them.
+2. result="fail": describe what went wrong. Keep working until it passes.
+3. result="unverified": only when the criterion genuinely can't be checked
+   mechanically (e.g., "code is readable"). Explain why in the output field.
+   Do not use unverified as a shortcut for a criterion you didn't check.
+4. Missing evidence for a criterion = the review worker will treat it as unverified.
+
+Self-verification eliminates a full fix/re-review cycle for every broken criterion
+you catch yourself.
 ```
 
 ## 9. Stewardship Protocol
@@ -315,6 +331,35 @@ Budget: max 2 auto-fix attempts per task (levels 1-2 combined).
 On the 3rd failure, escalate to LEVEL 4 regardless.
 ```
 
+## 15. Journal Protocol
+
+```
+JOURNAL RULES (orchestrator only — workers do not write the journal):
+- The journal file is .trellis/journal.jsonl — one JSON object per line, append-only.
+- Create the file if it doesn't exist. Never overwrite existing lines.
+- The orchestrator (do.md) writes one event line at each of these moments:
+  - plan_start:       when a plan is approved and implementation begins
+  - worker_complete:  when any worker (implement/review/fix) finishes
+  - review_verdict:   when a review verdict is extracted (PASS or FIXME)
+  - fix_cycle:        when a fix worker is spawned (log cycle number)
+  - completion:       when the full task is done (any path)
+
+Event format — each line is a valid JSON object:
+  {"ts":"YYYY-MM-DDTHH:MM:SS","event":"<type>","plan_id":"<NNN or null>","path":"simple|standard|complex","data":{...}}
+
+The data field carries event-specific context:
+  plan_start:      {"title":"<plan title>","baseline_hash":"<git hash>"}
+  worker_complete: {"role":"implement|review|fix","verdict":"pass|fixme|none"}
+  review_verdict:  {"verdict":"PASS|FIXME","issues_count":<n>}
+  fix_cycle:       {"cycle":<1|2>}
+  completion:      {"agents_spawned":<n>,"fix_cycles":<n>,"verdict":"pass|fixme|none"}
+
+Why: STATE.md is a mutable snapshot — if a session dies mid-task, the last
+snapshot may be inconsistent. The journal is an append-only audit trail that
+survives session failures. /trellis:status can replay it to reconstruct true
+task history. Never edit or delete journal lines.
+```
+
 ## Machine-Parseable Output Tags
 
 Workers produce structured outputs that orchestrators parse via regex. Tags must appear on their own line.
@@ -323,8 +368,10 @@ Workers produce structured outputs that orchestrators parse via regex. Tags must
 |--------|-----|-----------------|
 | Review verdict | `<trellis:verdict>PASS\|FIXME</trellis:verdict>` | PASS or FIXME |
 | Plan file path | `<trellis:plan_path>path/to/file.md</trellis:plan_path>` | Plan file path |
+| Verification evidence | `<trellis:evidence criterion="...">...</trellis:evidence>` | One block per done_when criterion |
 
 If a tag is missing from worker output, treat as FIXME (for verdict) or re-glob `.trellis/plans/*.md` (for plan path).
+Review workers must check evidence blocks (§3 PASS 2). Implement workers must emit them (§8).
 
 ## Injection Map
 
@@ -340,16 +387,17 @@ needs — extra sections waste context tokens without helping the worker.
 | §5 Pending Decisions | yes | — | — | — | — |
 | §6 State Update | yes | — | — | — | — |
 | §7 Implementation Integrity | yes | — | — | — | — |
-| §8 Verification | yes | — | yes | — | — |
+| §8 Verification | yes | yes | yes | — | — |
 | §9 Stewardship | — | — | — | yes | — |
 | §10 Backlog | — | — | — | — | — |
 | §11 Audit | — | — | — | — | yes |
 | §12 Visual Identity | yes | yes | yes | yes | yes |
 | §13 Metrics | — | — | — | — | — |
 | §14 Deviation | yes | — | — | — | — |
+| §15 Journal | — | — | — | — | — |
 
 Notes:
-- §10 Backlog and §13 Metrics are handled by orchestrator commands, not injected into workers
+- §10 Backlog, §13 Metrics, and §15 Journal are handled by the orchestrator, not injected into workers
 - PLAN workers get §9 for stewardship checks; the plan format is injected separately. The PLAN role is used in the complex path only — standard path plans are drafted inline by the orchestrator.
 - §12 Visual Identity is injected into ALL workers so every output carries plant personality
 - §14 Deviation gives implement workers graduated autonomy rules for handling surprises without blocking on every hiccup

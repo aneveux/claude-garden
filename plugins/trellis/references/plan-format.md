@@ -80,3 +80,16 @@ When stewardship documents (VISION.md, DECISIONS.md) are loaded and misalignment
 - Tasks within a wave are independent (can parallelize)
 - `Done When` items must be observable and testable — no subjective criteria
 - `Must Haves` (complex only) specify structural constraints for verification
+
+## Writing Good Done When Criteria
+
+Each criterion must be verifiable by running a command or reading a file. Avoid generic criteria that produce silent partials.
+
+| Weak (don't write) | Strong (write this) |
+|--------------------|---------------------|
+| Implementation is complete | `npm test -- rate-limit` exits 0 |
+| Tests pass | `curl -X POST /api/v1/items` returns 201 with `id` field |
+| Code is clean | `tsc --noEmit` exits 0 with no errors |
+| Feature works | Rate limiter returns 429 after 100 requests/minute on `/api/*` |
+
+Workers must emit a `<trellis:evidence>` block per criterion (see §8 in conventions.md). The review worker checks these blocks in PASS 2. Weak criteria lead to missing or unverifiable evidence — write specific ones so workers can prove each one mechanically.

@@ -1,6 +1,17 @@
 {
-  "description": "Trellis framework hooks for context monitoring, session state, and audit tracking",
+  "description": "Trellis framework hooks for context monitoring, session state, audit tracking, and command output compression",
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/command-compressor.js\""
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "hooks": [

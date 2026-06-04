@@ -89,6 +89,28 @@ The user's request follows `/trellis:do`. Parse it for:
 - **Path override**: `quick:` prefix -> force simple. `plan:` prefix -> force standard. `deep:` prefix -> force complex.
 - **Natural language request**: the actual task description
 
+### Clarification Gate
+
+After parsing, apply a vagueness heuristic before doing anything else. A request is vague when:
+- It's **fewer than 8 words** AND contains a high-ambiguity verb:
+  `improve`, `fix`, `clean up`, `refactor`, `update`, `make better`, `handle`, `deal with`, `look at`, `check`
+- OR it **names no specific file, module, feature, or behaviour** (e.g. "fix the auth" vs "fix login redirect loop in auth.ts")
+
+If vague AND no path override was given: ask 1-2 targeted questions before routing.
+
+Use AskUserQuestion:
+- question: "A bit more context will help me plan this correctly — [specific question about scope or behaviour]"
+- header: "Clarify"
+- options: (2-3 concrete options inferred from STATE.md learnings + codebase context, plus "I'll describe it" as free-text fallback)
+
+Ask ONE question at a time — no more. After the answer, proceed to Step 2.
+
+**Do NOT apply the gate when:**
+- A path override is present (`quick:`, `plan:`, `deep:`) — user has already committed to a path
+- The request references a specific file, function, or error message
+- The request came from a backlog item (already scoped)
+- STATE.md shows active work being resumed
+
 If the task description is empty (user ran `/trellis:do` with no argument):
 1. Read `.trellis/BACKLOG.md` if it exists
 2. If backlog has open items, present the top items (critical first) and offer to pull one:
@@ -173,9 +195,15 @@ After work is completed (path execution finished, review passed):
 
 This step is lightweight — a quick scan, not a deep analysis. Skip if no backlog exists.
 
-## Step 5: Log Metrics
+## Step 5: Log Journal + Metrics
 
-After work is completed (any path), log task metrics to `.trellis/metrics.json`:
+After work is completed (any path), append a completion event to `.trellis/journal.jsonl`:
+```json
+{"ts":"YYYY-MM-DDTHH:MM:SS","event":"completion","plan_id":"<NNN or null>","path":"simple|standard|complex","data":{"agents_spawned":<n>,"fix_cycles":<n>,"verdict":"pass|fixme|none"}}
+```
+Create the file if it doesn't exist. Append one line — never rewrite.
+
+Then log task metrics to `.trellis/metrics.json`:
 
 1. Read `.trellis/metrics.json` (create with `{"tasks":[]}` if missing)
 2. Append a task entry:

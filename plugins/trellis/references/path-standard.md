@@ -72,7 +72,14 @@ Use AskUserQuestion:
 ## Implementation
 
 8. Find and read the conventions reference: Glob `**/trellis/references/conventions.md`, then read it. You will paste relevant sections from this file into each worker's spawn prompt.
-9. Read `.trellis/trellis.yaml` for specialist config and worker model
+9. Read `.trellis/trellis.yaml` for specialist config and worker model. Resolve the model tier:
+   - If `models.tiers.standard` is set, use it for implement + fix workers
+   - Else if `models.implementer` is set, use it
+   - Else if `models.worker` is set, use it
+   - Else default to `sonnet`
+   For the review worker: if the plan touches security, auth, or architectural concerns
+   (detected from task descriptions or changed file paths), upgrade to `models.tiers.complex`
+   (default: opus) regardless of the standard tier setting. Otherwise use the standard tier.
 10. Determine if a specialist applies using §4 (Specialist Delegation) from conventions.md.
 11. Record the current commit hash as the implementation baseline:
     Run `git rev-parse HEAD` and save the result as `BASELINE_HASH`. You'll use this after implementation to find all changed files.
@@ -124,11 +131,17 @@ prompt: |
   - Update plan checkboxes as you go
   - Check done_when criteria before finishing
   - Log learnings and pending decisions to .trellis/STATE.md
-model: <from trellis.yaml models.implementer if set, else models.worker, default sonnet>
+model: <resolved tier model from step 9 — tiers.standard > models.implementer > models.worker > sonnet>
 ```
 
-13. Update plan status to `in-progress`
-14. Wait for implement worker to complete
+13. Update plan status to `in-progress`. Append a journal event:
+    ```json
+    {"ts":"YYYY-MM-DDTHH:MM:SS","event":"plan_start","plan_id":"<NNN>","path":"standard","data":{"title":"<plan title>","baseline_hash":"<BASELINE_HASH>"}}
+    ```
+14. Wait for implement worker to complete. When it does, append:
+    ```json
+    {"ts":"YYYY-MM-DDTHH:MM:SS","event":"worker_complete","plan_id":"<NNN>","path":"standard","data":{"role":"implement","verdict":"none"}}
+    ```
 
 ## Review
 
@@ -153,7 +166,7 @@ prompt: |
   <"Review Protocol" section>
   <"Learning Protocol" section>
   <"Visual Identity" section>
-model: <from trellis.yaml models.reviewer if set, else models.worker, default sonnet>
+model: <if security/auth/arch concerns: tiers.complex > opus; else tiers.standard > models.reviewer > models.worker > sonnet>
 ```
 
 17. Show the bloom with review summary:
@@ -172,13 +185,37 @@ model: <from trellis.yaml models.reviewer if set, else models.worker, default so
 18. Process review result — extract verdict from the review output:
     - Find `<trellis:verdict>...</trellis:verdict>` in the output and extract the inner text (PASS or FIXME)
     - If no XML tag found, treat as FIXME and log a note that the reviewer didn't produce a structured verdict.
+    - Append a journal event:
+      ```json
+      {"ts":"YYYY-MM-DDTHH:MM:SS","event":"review_verdict","plan_id":"<NNN>","path":"standard","data":{"verdict":"PASS|FIXME","issues_count":<n>}}
+      ```
     - **If PASS**: Continue to Completion
-    - **If FIXME**: Show issues to user, then spawn fix worker:
+    - **If FIXME**: Before spawning the fix worker, do an inline root-cause diagnosis:
+
+    **Diagnosis step** (done by you, the orchestrator — not a separate agent):
+    a. Read the FIXME items from the review output
+    b. Look at each failed `<trellis:evidence>` block (result="fail" or missing)
+    c. For each failing criterion, identify WHY it fails:
+       - Import/reference error → specific file and line
+       - Test failure → which assertion, what was expected vs actual
+       - Type error → which type, where the mismatch is
+       - Logic error → which branch or condition is wrong
+    d. Produce a short diagnosis summary (3-5 bullet points max):
+       "Root causes: (1) X is failing because Y. (2) Z is missing from W."
+
+    Then show the diagnosis and FIXME items to the user. Append a journal event before spawning the fix worker:
+    ```json
+    {"ts":"YYYY-MM-DDTHH:MM:SS","event":"fix_cycle","plan_id":"<NNN>","path":"standard","data":{"cycle":<1|2>}}
+    ```
+    Then spawn the fix worker:
 
 ```
 description: "fix <plan-title> issues"
 prompt: |
   You are a trellis FIX worker.
+
+  ## Root Cause Diagnosis
+  <paste the diagnosis summary from the orchestrator's analysis>
 
   ## Issues to Fix
   <paste FIXME items from review>
@@ -192,8 +229,9 @@ prompt: |
 
   ## Rules
   - Fix ONLY the listed issues. No other changes.
+  - Start from the root causes in the diagnosis, not from symptoms.
   - One commit per fix.
-model: <from trellis.yaml models.fixer if set, else models.worker, default sonnet>
+model: <resolved tier model from step 9 — tiers.standard > models.fixer > models.worker > sonnet>
 ```
 
 19. After fix worker: spawn another review worker (max 2 fix/review cycles total)

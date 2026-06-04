@@ -32,14 +32,19 @@ prompt: |
   Do NOT write any files. Just report back.
 
   <paste "Visual Identity" section from conventions.md>
-model: <from trellis.yaml models.planner if set, else models.worker, default sonnet>
+model: <tiers.complex > models.planner > models.worker, default sonnet — research benefits from broader reasoning>
 ```
 
 2. Use research findings to inform planning
 
 ## Planning
 
-2b. Reactive stewardship check:
+2b. Resolve model tiers from `.trellis/trellis.yaml` before spawning any workers:
+    - Complex tier (plan + review): `models.tiers.complex` > `models.planner/reviewer` > `models.worker` > `opus`
+    - Standard tier (implement + fix per wave): `models.tiers.standard` > `models.implementer/fixer` > `models.worker` > `sonnet`
+    Complex path always uses the complex tier for planning and review. Use standard tier for implementation waves.
+
+2c. Reactive stewardship check:
     - Read `.trellis/trellis.yaml` stewardship config
     - If stewardship.vision path exists: read the VISION.md file
     - If stewardship.decisions path exists: read the DECISIONS.md file
@@ -89,7 +94,7 @@ prompt: |
   ## Output
   When done, report the plan file path using this exact format:
   <trellis:plan_path>.trellis/plans/NNN-slug.md</trellis:plan_path>
-model: <from trellis.yaml models.planner if set, else models.worker, default sonnet>
+model: <complex tier — tiers.complex > models.planner > models.worker, default opus>
 ```
 
 5. After the plan worker completes:
@@ -105,6 +110,10 @@ model: <from trellis.yaml models.planner if set, else models.worker, default son
 9. Determine if a specialist applies using §4 (Specialist Delegation) from conventions.md.
 10. Record the current commit hash as the implementation baseline:
     Run `git rev-parse HEAD` and save the result as `BASELINE_HASH`.
+    Append a journal event:
+    ```json
+    {"ts":"YYYY-MM-DDTHH:MM:SS","event":"plan_start","plan_id":"<NNN>","path":"complex","data":{"title":"<plan title>","baseline_hash":"<BASELINE_HASH>"}}
+    ```
 11. Execute wave by wave:
    For each wave:
    - Identify independent task groups within the wave
@@ -123,6 +132,10 @@ model: <from trellis.yaml models.planner if set, else models.worker, default son
          a) User describes the resolution — apply it, complete the merge
          b) Abort this wave — revert merge, mark wave as failed, ask user to adjust plan
    - Wait for all workers in wave to complete
+   - For each worker that finished, append a journal event:
+     ```json
+     {"ts":"YYYY-MM-DDTHH:MM:SS","event":"worker_complete","plan_id":"<NNN>","path":"complex","data":{"role":"implement","verdict":"none","wave":<wave-number>}}
+     ```
    - Verify wave tasks are done (check plan checkboxes)
    - Show garden for parallel waves:
 ```

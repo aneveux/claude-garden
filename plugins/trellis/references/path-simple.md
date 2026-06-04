@@ -16,6 +16,12 @@ Show the stem:
 ─────────────────────────────────────────────
 ```
 
+## Model
+
+The simple path runs inline (no agent spawn), so no model selection needed.
+If a specialist is used, it runs at the `tiers.simple` model (default: haiku).
+Check `trellis.yaml` — if `models.tiers.simple` is set, use it; otherwise use haiku.
+
 ## Execution
 
 1. Read the relevant file(s)

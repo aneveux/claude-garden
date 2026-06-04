@@ -12,8 +12,18 @@ models:
   # Per-role overrides (optional) — keys match worker roles: PLAN, IMPLEMENT, REVIEW, FIX
   # planner: opus
   # implementer: sonnet
-  # reviewer: haiku
+  # reviewer: sonnet
   # fixer: sonnet
+
+  # Adaptive tier routing — selects model by task complexity.
+  # Overrides per-role config when the orchestrator detects a tier match.
+  # simple:   1-5 files, clear fixes (default: haiku — fast and cheap)
+  # standard: 6+ files, bounded scope (default: sonnet — balanced)
+  # complex:  cross-cutting, redesign, security/arch review (default: opus — thorough)
+  # tiers:
+  #   simple: haiku
+  #   standard: sonnet
+  #   complex: opus
 
 stewardship:
   # Documents that define "good" for this project.
