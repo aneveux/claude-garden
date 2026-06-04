@@ -289,6 +289,7 @@ METRICS RULES:
     - fixme: review found issues (fix cycles were needed)
     - none: no review ran (simple path)
   - fix_cycles: how many fix/re-review rounds were needed (0 if review passed)
+  - tdd_used: whether TDD was active (TEST_COMMIT_HASH was non-null). Always false for simple path.
   - completed: ISO date
 - The metrics file is a JSON object with a "tasks" array. Append, never overwrite.
 - /trellis:status reads this file and computes summary stats.
@@ -339,9 +340,10 @@ JOURNAL RULES (orchestrator only — workers do not write the journal):
 - Create the file if it doesn't exist. Never overwrite existing lines.
 - The orchestrator (do.md) writes one event line at each of these moments:
   - plan_start:       when a plan is approved and implementation begins
-  - worker_complete:  when any worker (implement/review/fix) finishes
+  - worker_complete:  when any worker (implement/review/fix/test_writer) finishes
   - review_verdict:   when a review verdict is extracted (PASS or FIXME)
   - fix_cycle:        when a fix worker is spawned (log cycle number)
+  - tdd_gate:         when the user approves, adjusts, or skips TDD after test writing
   - completion:       when the full task is done (any path)
 
 Event format — each line is a valid JSON object:
@@ -349,15 +351,53 @@ Event format — each line is a valid JSON object:
 
 The data field carries event-specific context:
   plan_start:      {"title":"<plan title>","baseline_hash":"<git hash>"}
-  worker_complete: {"role":"implement|review|fix","verdict":"pass|fixme|none"}
+  worker_complete: {"role":"implement|review|fix|test_writer","verdict":"pass|fixme|none"}
   review_verdict:  {"verdict":"PASS|FIXME","issues_count":<n>}
   fix_cycle:       {"cycle":<1|2>}
+  tdd_gate:        {"decision":"approved|adjusted|skipped","test_commit_hash":"<hash or null>"}
   completion:      {"agents_spawned":<n>,"fix_cycles":<n>,"verdict":"pass|fixme|none"}
 
 Why: STATE.md is a mutable snapshot — if a session dies mid-task, the last
 snapshot may be inconsistent. The journal is an append-only audit trail that
 survives session failures. /trellis:status can replay it to reconstruct true
 task history. Never edit or delete journal lines.
+```
+
+## 16. TDD Protocol
+
+Three injectable sub-sections — inject only the one relevant to each worker role. All three are conditional on `tdd.enabled: true` in trellis.yaml. Omit entirely if TDD is not active.
+
+```
+TDD RULES — TEST WRITER:
+- Your only job is to write tests. Do NOT write any production code.
+- Map each Done When criterion from the plan to at least one test case.
+- Read existing test files first to match the project's test framework and conventions.
+- Tests must FAIL after your commit (no production code exists yet).
+  If a test passes without any implementation, it is not asserting real behavior — fix it.
+- Commit with: "test: <plan-title> [TDD baseline]"
+- After committing, run the full test suite to verify every new test FAILS.
+  Distinguish failure (assertion not met) from error (import missing, syntax broken) —
+  an error means the test file itself is broken and needs to be fixed before moving on.
+- Log to STATE.md Learnings: test files created and what each top-level test block asserts.
+```
+
+```
+TDD CONSTRAINT — IMPLEMENT WORKER:
+- Tests for this plan were written before you by a separate agent. Do NOT modify their assertions.
+- Find the test files: git diff --name-only <TEST_BASELINE_HASH>..<TEST_COMMIT_HASH>
+  (These are the TDD-baseline tests — make them pass by writing production code.)
+- If a test has a genuinely wrong expectation (wrong behavior tested, not a wrong test), log it
+  as a Pending Decision rather than modifying it. The user decides what the correct behavior is.
+- Your done_when evidence blocks must include test suite output showing these tests pass.
+```
+
+```
+TDD VERIFICATION — REVIEW WORKER:
+- This plan used TDD. Tests were written by a separate worker before any production code.
+- In PASS 2: confirm all TDD-baseline tests pass (run the full test suite).
+- Integrity check: git diff <TEST_COMMIT_HASH>..HEAD -- '*test*' '*spec*'
+  If the implement worker modified any test ASSERTIONS (beyond adding new tests), flag as FIXME.
+  Rationale: modifying assertions games the tests rather than fixing the code.
 ```
 
 ## Machine-Parseable Output Tags
@@ -378,26 +418,31 @@ Review workers must check evidence blocks (§3 PASS 2). Implement workers must e
 Which sections to paste into each worker's spawn prompt. Inject only what the role
 needs — extra sections waste context tokens without helping the worker.
 
-| Section | IMPLEMENT | REVIEW | FIX | PLAN | AUDIT |
-|---------|-----------|--------|-----|------|-------|
-| §1 Commit Protocol | yes | — | yes | — | — |
-| §2 Learning Protocol | yes | yes | yes | — | yes |
-| §3 Review Protocol | — | yes | — | — | — |
-| §4 Specialist Delegation | yes | — | — | — | — |
-| §5 Pending Decisions | yes | — | — | — | — |
-| §6 State Update | yes | — | — | — | — |
-| §7 Implementation Integrity | yes | — | — | — | — |
-| §8 Verification | yes | yes | yes | — | — |
-| §9 Stewardship | — | — | — | yes | — |
-| §10 Backlog | — | — | — | — | — |
-| §11 Audit | — | — | — | — | yes |
-| §12 Visual Identity | yes | yes | yes | yes | yes |
-| §13 Metrics | — | — | — | — | — |
-| §14 Deviation | yes | — | — | — | — |
-| §15 Journal | — | — | — | — | — |
+| Section | IMPLEMENT | REVIEW | FIX | PLAN | AUDIT | TEST WRITER |
+|---------|-----------|--------|-----|------|-------|-------------|
+| §1 Commit Protocol | yes | — | yes | — | — | yes |
+| §2 Learning Protocol | yes | yes | yes | — | yes | yes |
+| §3 Review Protocol | — | yes | — | — | — | — |
+| §4 Specialist Delegation | yes | — | — | — | — | — |
+| §5 Pending Decisions | yes | — | — | — | — | — |
+| §6 State Update | yes | — | — | — | — | — |
+| §7 Implementation Integrity | yes | — | — | — | — | — |
+| §8 Verification | yes | yes | yes | — | — | — |
+| §9 Stewardship | — | — | — | yes | — | — |
+| §10 Backlog | — | — | — | — | — | — |
+| §11 Audit | — | — | — | — | yes | — |
+| §12 Visual Identity | yes | yes | yes | yes | yes | yes |
+| §13 Metrics | — | — | — | — | — | — |
+| §14 Deviation | yes | — | — | — | — | — |
+| §15 Journal | — | — | — | — | — | — |
+| §16 TDD (test writer rules) | — | — | — | — | — | yes (when active) |
+| §16 TDD (implement constraint) | yes (when active) | — | yes (when active) | — | — | — |
+| §16 TDD (review verification) | — | yes (when active) | — | — | — | — |
 
 Notes:
 - §10 Backlog, §13 Metrics, and §15 Journal are handled by the orchestrator, not injected into workers
 - PLAN workers get §9 for stewardship checks; the plan format is injected separately. The PLAN role is used in the complex path only — standard path plans are drafted inline by the orchestrator.
 - §12 Visual Identity is injected into ALL workers so every output carries plant personality
 - §14 Deviation gives implement workers graduated autonomy rules for handling surprises without blocking on every hiccup
+- §16 TDD sub-sections are conditional: only inject when `tdd.enabled: true` in trellis.yaml. Each worker role gets only its relevant sub-section.
+- §16 TDD implement constraint is also injected into FIX workers: a fix worker that patches test failures must respect the same no-modify-assertions rule.

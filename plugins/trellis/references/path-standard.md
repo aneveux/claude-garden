@@ -69,6 +69,85 @@ Use AskUserQuestion:
    - **Modify**: Ask what to change, adjust plan, re-present
    - **Cancel**: Update plan status to `cancelled`, stop
 
+## TDD Phase (skip if tdd.enabled is not true in trellis.yaml)
+
+7b. Read `tdd` config from `.trellis/trellis.yaml`:
+    - `tdd.enabled` — if false or absent, skip this entire section
+    - `tdd.approve_tests` — whether to pause for user approval before implementing
+    - `tdd.exclude` — list of task-type patterns that bypass TDD (e.g., docs, config)
+
+7c. Check exclusions: if ALL plan tasks match a `tdd.exclude` pattern, skip TDD for this plan.
+    Matching is case-insensitive substring: task "update VISION.md docs" matches `docs`.
+
+7d. Record current commit hash as the pre-test baseline:
+    Run `git rev-parse HEAD` and save as `TEST_BASELINE_HASH`.
+
+7e. Spawn the test writer worker:
+
+```
+description: "write tests for <plan-title>"
+prompt: |
+  You are a trellis TEST WRITER worker.
+
+  ## Plan
+  <paste full plan tasks and done_when here>
+
+  ## Your Job
+  Write tests that will FAIL until the production code is implemented.
+  Map each Done When criterion to at least one test case.
+  Do NOT write any production code.
+
+  ## Protocols
+  <paste these sections from conventions.md:>
+  <"§1 Commit Protocol" section>
+  <"§2 Learning Protocol" section>
+  <"§16 TDD — TEST WRITER" sub-section>
+  <"§12 Visual Identity" section>
+model: <resolved standard tier>
+```
+
+7f. After test writer completes:
+    - Run `git rev-parse HEAD` and save as `TEST_COMMIT_HASH`
+    - Append a journal event:
+      ```json
+      {"ts":"YYYY-MM-DDTHH:MM:SS","event":"worker_complete","plan_id":"<NNN>","path":"standard","data":{"role":"test_writer","verdict":"none"}}
+      ```
+    - If `tdd.approve_tests` is true, before presenting the gate, show what the test writer created:
+      Run `git diff --name-only <TEST_BASELINE_HASH>..HEAD` to list the test files added.
+      Show the file paths and any key assertions noted in the test writer's output. Then present the gate:
+
+    Use AskUserQuestion:
+    - question: "Tests written. Review them before implementation starts?"
+    - header: "TDD Gate"
+    - options:
+      - label: "Approve tests — start implementing"
+        description: "Tests look correct. Proceed to production code."
+      - label: "Adjust tests first"
+        description: "I want to change something before we implement."
+      - label: "Skip TDD for this plan"
+        description: "Bypass TDD and go straight to implementation."
+
+    Handle response:
+    - **Approve**: continue to Implementation
+    - **Adjust**: ask what to change, apply changes (or let user edit), re-commit, re-present gate
+    - **Skip TDD**: note TEST_COMMIT_HASH as null, continue to Implementation without TDD constraint
+
+    After resolving the gate, append a journal event:
+    ```json
+    {"ts":"YYYY-MM-DDTHH:MM:SS","event":"tdd_gate","plan_id":"<NNN>","path":"standard","data":{"decision":"approved|adjusted|skipped","test_commit_hash":"<TEST_COMMIT_HASH or null>"}}
+    ```
+
+    If `tdd.approve_tests` is false: continue directly to Implementation without presenting the gate.
+    No `tdd_gate` event is needed — the `worker_complete` event for `test_writer` already records that
+    TDD ran; the `tdd_gate` event records a human decision, and with `approve_tests: false` none was presented.
+
+    Persist TDD hashes (skip only if TEST_COMMIT_HASH is null — user chose "Skip TDD"):
+    - Read the plan file and add to its YAML frontmatter:
+      `tdd_baseline_hash: <TEST_BASELINE_HASH>` and `tdd_commit_hash: <TEST_COMMIT_HASH>`
+    - Write the updated plan file
+    Rationale: if the session is interrupted during implementation and resumed later, the orchestrator
+    reads these hashes from the plan frontmatter to reconstruct TDD context without re-running the test writer.
+
 ## Implementation
 
 8. Find and read the conventions reference: Glob `**/trellis/references/conventions.md`, then read it. You will paste relevant sections from this file into each worker's spawn prompt.
@@ -131,6 +210,13 @@ prompt: |
   - Update plan checkboxes as you go
   - Check done_when criteria before finishing
   - Log learnings and pending decisions to .trellis/STATE.md
+
+  <if TDD is active (TEST_COMMIT_HASH is not null)>:
+  ## TDD Constraint
+  <paste §16 TDD — IMPLEMENT WORKER sub-section from conventions.md>
+  TEST_BASELINE_HASH: <TEST_BASELINE_HASH>
+  TEST_COMMIT_HASH: <TEST_COMMIT_HASH>
+  </if>
 model: <resolved tier model from step 9 — tiers.standard > models.implementer > models.worker > sonnet>
 ```
 
@@ -166,6 +252,13 @@ prompt: |
   <"Review Protocol" section>
   <"Learning Protocol" section>
   <"Visual Identity" section>
+
+  <if TDD is active (TEST_COMMIT_HASH is not null)>:
+  ## TDD Verification
+  <paste §16 TDD — REVIEW WORKER sub-section from conventions.md>
+  TEST_BASELINE_HASH: <TEST_BASELINE_HASH>
+  TEST_COMMIT_HASH: <TEST_COMMIT_HASH>
+  </if>
 model: <if security/auth/arch concerns: tiers.complex > opus; else tiers.standard > models.reviewer > models.worker > sonnet>
 ```
 
@@ -231,6 +324,13 @@ prompt: |
   - Fix ONLY the listed issues. No other changes.
   - Start from the root causes in the diagnosis, not from symptoms.
   - One commit per fix.
+
+  <if TDD is active (TEST_COMMIT_HASH is not null)>:
+  ## TDD Constraint
+  <paste §16 TDD — IMPLEMENT WORKER sub-section from conventions.md>
+  TEST_BASELINE_HASH: <TEST_BASELINE_HASH>
+  TEST_COMMIT_HASH: <TEST_COMMIT_HASH>
+  </if>
 model: <resolved tier model from step 9 — tiers.standard > models.fixer > models.worker > sonnet>
 ```
 

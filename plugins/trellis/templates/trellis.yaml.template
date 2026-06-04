@@ -25,6 +25,21 @@ models:
   #   standard: sonnet
   #   complex: opus
 
+tdd:
+  # Test-Driven Development mode.
+  # When enabled, trellis spawns a TEST WRITER worker before the implementer.
+  # Tests are written first (and committed as a baseline), then the implementer makes them pass.
+  # The review worker verifies the implementer did not modify test assertions.
+  enabled: {{TDD_ENABLED}}
+
+  # Pause for user approval after tests are written, before implementation starts.
+  # Set to false to let trellis run test-write + implement back-to-back without a gate.
+  approve_tests: {{TDD_APPROVE_TESTS}}
+
+  # Skip TDD for this entire plan when ALL tasks match one of these keywords (case-insensitive substring match).
+  # Use for plans that are purely documentation, configuration, or migration work with no testable behavior.
+  # exclude: [docs, config, migration]
+
 stewardship:
   # Documents that define "good" for this project.
   # Paths are relative to project root. Created during bootstrap.

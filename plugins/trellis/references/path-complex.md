@@ -103,6 +103,71 @@ model: <complex tier — tiers.complex > models.planner > models.worker, default
    - Read the plan file
 6. Present plan to user (same approval flow as standard path — use AskUserQuestion with Approve/Modify/Cancel)
 
+## TDD Phase (skip if tdd.enabled is not true in trellis.yaml)
+
+6b. Read `tdd` config from `.trellis/trellis.yaml` (same as standard path).
+    If `tdd.enabled` is false or absent, skip to Execution.
+
+6c. Check exclusions: if ALL plan tasks match a `tdd.exclude` pattern, skip TDD.
+    Matching is case-insensitive substring: task "update VISION.md docs" matches `docs`.
+
+6d. Record current commit hash: run `git rev-parse HEAD` and save as `TEST_BASELINE_HASH`.
+
+6e. Spawn the test writer worker.
+    For complex plans, the test writer covers ALL waves — write the full test suite upfront.
+    Rationale: test isolation between waves is harder to enforce than a single complete suite.
+
+```
+description: "write tests for <plan-title>"
+prompt: |
+  You are a trellis TEST WRITER worker.
+
+  ## Plan
+  <paste full plan tasks and done_when here (all waves)>
+
+  ## Your Job
+  Write tests that will FAIL until the production code is implemented.
+  Map each Done When criterion to at least one test case.
+  Do NOT write any production code.
+
+  ## Test Grouping by Wave (required for complex plans)
+  This plan executes in waves. Each wave's workers will be told to make only THEIR wave's
+  tests pass — tests for later waves are expected to still fail at that point. For this to
+  work, tests must be clearly attributed to a wave. Group them using describe blocks:
+    describe("Wave 1 — <first wave title>", () => { ... })
+    describe("Wave 2 — <second wave title>", () => { ... })
+  Or use separate test files per wave when the project conventions support it.
+  Without this grouping, wave workers cannot tell "expected to fail" from "I broke something"
+  — they'll either over-fix (touching out-of-scope code) or under-fix (missing their tests).
+
+  ## Protocols
+  <paste these sections from conventions.md:>
+  <"§1 Commit Protocol" section>
+  <"§2 Learning Protocol" section>
+  <"§16 TDD — TEST WRITER" sub-section>
+  <"§12 Visual Identity" section>
+model: <resolved standard tier>
+```
+
+6f. After test writer completes:
+    - Run `git rev-parse HEAD` and save as `TEST_COMMIT_HASH`
+    - Append a journal event:
+      ```json
+      {"ts":"YYYY-MM-DDTHH:MM:SS","event":"worker_complete","plan_id":"<NNN>","path":"complex","data":{"role":"test_writer","verdict":"none"}}
+      ```
+    - If `tdd.approve_tests` is true: present the TDD Gate approval question (same as standard path §TDD Phase step 7f,
+      including the "show test files first" step — run `git diff --name-only <TEST_BASELINE_HASH>..HEAD` and list them).
+    - If approved or approve_tests is false: append a tdd_gate journal event and continue to Execution.
+      ```json
+      {"ts":"YYYY-MM-DDTHH:MM:SS","event":"tdd_gate","plan_id":"<NNN>","path":"complex","data":{"decision":"approved|adjusted|skipped","test_commit_hash":"<TEST_COMMIT_HASH or null>"}}
+      ```
+    - If user skips TDD: set TEST_COMMIT_HASH to null and continue without TDD constraint.
+    - Persist TDD hashes (skip only if TEST_COMMIT_HASH is null):
+      Read the plan file and add to its YAML frontmatter:
+      `tdd_baseline_hash: <TEST_BASELINE_HASH>` and `tdd_commit_hash: <TEST_COMMIT_HASH>`
+      Write the updated plan file. These survive session interruption — the resumption flow in do.md
+      reads them to reconstruct TDD context without re-running the test writer.
+
 ## Execution
 
 7. Read conventions reference: Glob `**/trellis/references/conventions.md`, then read it.
@@ -120,6 +185,11 @@ model: <complex tier — tiers.complex > models.planner > models.worker, default
    - If tasks are truly independent (different files, no shared imports):
      Spawn parallel implement workers (one per task group)
      Each worker gets its subset of tasks + done_when + commit/learning protocols
+     If TDD is active: include the TDD Constraint block (§16 IMPLEMENT WORKER) in each worker's prompt,
+       with TEST_BASELINE_HASH and TEST_COMMIT_HASH values.
+       Also append to the TDD Constraint: "The TDD baseline covers all waves. Your job is to
+       make only the tests for YOUR wave's Done When criteria pass — tests for later waves are
+       expected to still fail until those waves run."
      Include specialist delegation in each worker's prompt if applicable (same as path-standard step 12)
    - If tasks touch overlapping files, share imports, or you're unsure:
      Default to worktree isolation — the merge cost is low, the conflict risk is not.

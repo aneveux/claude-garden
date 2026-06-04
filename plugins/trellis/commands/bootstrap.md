@@ -1,5 +1,5 @@
 ---
-description: Initialize trellis on a project (2 questions, 2 files)
+description: Initialize trellis on a project (3 questions, 2 files)
 allowed-tools: Read, Write, Bash, Glob, Agent, AskUserQuestion
 ---
 
@@ -54,11 +54,32 @@ Extract INITIAL_FOCUS from selection:
 - New: "Project initialized. Ready for first task."
 - Existing: "Existing project. First task should explore codebase structure."
 
+**Q3**: Use AskUserQuestion with selection:
+- question: "Enable TDD mode? Trellis will write tests before every implementation — tests act as executable specs, and the implementer must make them pass without modifying assertions."
+- header: "TDD mode"
+- options:
+  - label: "Yes — tests first, always"
+    description: "A separate test writer runs before each implementation. Recommend pausing to review tests before coding starts."
+  - label: "Yes — tests first, no gate"
+    description: "Tests are written automatically before implementation, but no approval pause. Faster workflow."
+  - label: "No TDD"
+    description: "Standard flow: implement directly. You can always enable TDD later in trellis.yaml."
+- multiSelect: false
+
+Extract from selection:
+- "Yes — tests first, always": TDD_ENABLED=true, TDD_APPROVE_TESTS=true
+- "Yes — tests first, no gate": TDD_ENABLED=true, TDD_APPROVE_TESTS=false
+- "No TDD": TDD_ENABLED=false, TDD_APPROVE_TESTS=false
+
 ## Create Files
 
 1. Create directory: `.trellis/` (use `mkdir -p .trellis`)
 
-2. Read `trellis.yaml.template`, replace placeholders, write to `.trellis/trellis.yaml`
+2. Read `trellis.yaml.template`, replace all placeholders, write to `.trellis/trellis.yaml`:
+   - `{{PROJECT_NAME}}` → PROJECT_NAME
+   - `{{PROJECT_DESCRIPTION}}` → PROJECT_DESCRIPTION
+   - `{{TDD_ENABLED}}` → TDD_ENABLED (true or false)
+   - `{{TDD_APPROVE_TESTS}}` → TDD_APPROVE_TESTS (true or false)
 
 3. Read `STATE.md.template`, replace placeholders (including current date for BOOTSTRAP_DATE), write to `.trellis/STATE.md`
 

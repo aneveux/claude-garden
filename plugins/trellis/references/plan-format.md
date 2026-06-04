@@ -75,6 +75,10 @@ When stewardship documents (VISION.md, DECISIONS.md) are loaded and misalignment
 ## Rules
 
 - `status` field is updated by the trellis command as work progresses
+- `tdd_baseline_hash` / `tdd_commit_hash` are optional fields written by the orchestrator after the TDD
+  phase completes (test writer committed + gate resolved). When both are present and non-null in a resumed
+  plan, the orchestrator recovers them so implement workers get the TDD Constraint without re-running the
+  test writer phase. These fields are absent in plans where TDD was not used.
 - Task checkboxes `[ ]` / `[x]` updated by workers after each commit
 - Wave numbering determines execution order in complex path
 - Tasks within a wave are independent (can parallelize)

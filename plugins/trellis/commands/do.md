@@ -44,6 +44,11 @@ Use AskUserQuestion:
     - If decisions path configured and file exists: read DECISIONS.md
     These are needed if the resumed work reaches the review phase, where
     the reviewer may need to check alignment.
+1c. Recover TDD context from plan frontmatter:
+    - Check the plan's YAML frontmatter for `tdd_baseline_hash` and `tdd_commit_hash`
+    - If both are present and non-null: set TEST_BASELINE_HASH and TEST_COMMIT_HASH from them
+    - The TDD phase does NOT re-run during resumption — hashes present means the test writer ran
+      and the gate was already resolved in the prior session. Skip straight to implementation.
 2. Parse the plan:
    - Count `[x]` (done) vs `[ ]` (remaining) tasks
    - Determine plan type: has `## Wave` headers = complex, otherwise = standard
@@ -66,9 +71,13 @@ Use AskUserQuestion:
 
    **Standard plan with remaining tasks**:
    - Read conventions reference (Glob `**/trellis/references/conventions.md`)
-   - Spawn implement worker with ONLY the unchecked tasks and the plan's Done When criteria
-   - After implementation: spawn review worker covering ALL changes (not just this session's)
-     Use `git diff` against the commit before the plan started, or review all files listed in the plan
+   - Spawn implement worker with ONLY the unchecked tasks and the plan's Done When criteria.
+     If TEST_BASELINE_HASH and TEST_COMMIT_HASH were recovered in step 1c, include the TDD Constraint
+     block in the implement worker's prompt (paste §16 TDD — IMPLEMENT WORKER from conventions.md
+     with the recovered hash values).
+   - After implementation: spawn review worker covering ALL changes (not just this session's).
+     Use `git diff` against the commit before the plan started, or review all files listed in the plan.
+     If TEST_BASELINE_HASH and TEST_COMMIT_HASH were recovered, include the TDD Verification block too.
    - Read `references/path-standard.md` (Glob `**/trellis/references/path-standard.md`) and follow the Review section for the review/fix cycle and Completion
 
    **Complex plan with remaining waves**:
@@ -76,6 +85,9 @@ Use AskUserQuestion:
    - Read `references/path-complex.md` (Glob `**/trellis/references/path-complex.md`)
    - Resume wave-by-wave from the Execution section
    - Partially-completed waves: spawn workers only for unchecked tasks within the wave
+   - If TDD hashes were recovered in step 1c: the Execution section in path-complex.md uses
+     `if TDD is active (TEST_COMMIT_HASH is not null)` guards — those conditions are now true.
+     Each wave worker will receive the TDD Constraint automatically.
    - After all waves: read `references/path-standard.md` and follow Review and Completion
 
    **Plan with all tasks checked but not marked done** (interrupted during review):
@@ -215,6 +227,7 @@ Then log task metrics to `.trellis/metrics.json`:
      "agents_spawned": <count>,
      "review_verdict": "pass|fixme|none",
      "fix_cycles": <count>,
+     "tdd_used": true|false,
      "completed": "YYYY-MM-DD"
    }
    ```
