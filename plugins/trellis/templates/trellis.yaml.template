@@ -5,7 +5,12 @@ project:
 specialists:
   # Uncomment and set to delegate implementation to domain-specific agents:
   # bash: bark:bash-developer
-  # java: javacraft:java-developer
+  # java: graft:jenkins-developer
+
+testers:
+  # Uncomment to delegate test writing to domain-specific agents (requires tdd.enabled: true):
+  # bash: bark:bash-developer
+  # java: graft:jenkins-tester
 
 models:
   worker: sonnet  # default for all workers (accepts: sonnet, opus, haiku, or any model ID)

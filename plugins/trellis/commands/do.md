@@ -176,6 +176,12 @@ Read the appropriate path reference file and follow its instructions:
 
 ## Context Health (applies throughout path execution)
 
+Trellis ships three hooks that run automatically (no setup needed):
+- `context-monitor.js` (PostToolUse): fires after every tool call, emits "TRELLIS CONTEXT WARNING/CRITICAL" when context is high
+- `audit-nudge.js` (PostToolUse/Bash): fires after git commits, emits "TRELLIS AUDIT NUDGE/AUTO-TRIGGER" when audit thresholds are reached
+- `command-compressor.js` (PreToolUse/Bash): transparently rewrites high-output commands (git log, git diff, test runners, grep) to pipe through RTK before they run, keeping tool output compact in context
+- `session-save.js` (Stop): fires when Claude stops, preserving session context
+
 Between worker spawns (after any worker completes, before spawning the next):
 
 1. If a "TRELLIS CONTEXT WARNING" or "TRELLIS CONTEXT CRITICAL" message appeared
@@ -228,6 +234,7 @@ Then log task metrics to `.trellis/metrics.json`:
      "review_verdict": "pass|fixme|none",
      "fix_cycles": <count>,
      "tdd_used": true|false,
+     "tester_specialist": "<agent string or null>",
      "completed": "YYYY-MM-DD"
    }
    ```
@@ -248,5 +255,6 @@ Agent counting:
 - **Review finds critical issues after 2 fix cycles**: Follow the structured recovery flow in path-standard.md step 19 (Accept with debt / Rollback / Manual fix).
 - **Context running low**: Save state immediately (update plan checkboxes, STATE.md timestamp). Inform user: "🌿 Context is running low. Progress saved to STATE.md. Start a fresh session and run /trellis:do to resume."
 - **Specialist not found**: Warn user, implement directly without specialist.
+- **Tester specialist not found**: Warn user, TEST WRITER writes tests directly without delegating.
 - **`.trellis/` not initialized**: Tell user to run `/trellis:bootstrap` first.
 - **Plan file missing or corrupted**: Inform user. Offer to start fresh or create a new plan for the remaining work.

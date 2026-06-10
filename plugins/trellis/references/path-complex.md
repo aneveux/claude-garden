@@ -113,7 +113,13 @@ model: <complex tier — tiers.complex > models.planner > models.worker, default
 
 6d. Record current commit hash: run `git rev-parse HEAD` and save as `TEST_BASELINE_HASH`.
 
-6e. Spawn the test writer worker.
+6e. Determine if a tester specialist applies:
+    - Read `testers` config from `.trellis/trellis.yaml`
+    - Apply the same domain detection as §4 (Specialist Delegation): match the plan's primary files
+      against tester keys in trellis.yaml (priority: explicit mention > 80%+ file match > no match)
+    - Save the result as TESTER_AGENT (the configured agent string, or null if none matches)
+
+6f. Spawn the test writer worker.
     For complex plans, the test writer covers ALL waves — write the full test suite upfront.
     Rationale: test isolation between waves is harder to enforce than a single complete suite.
 
@@ -146,16 +152,22 @@ prompt: |
   <"§2 Learning Protocol" section>
   <"§16 TDD — TEST WRITER" sub-section>
   <"§12 Visual Identity" section>
+
+  <if TESTER_AGENT is not null>:
+  ## Tester Specialist
+  <paste "§17 Tester Specialist Delegation" section from conventions.md>
+  Delegate test writing to: <TESTER_AGENT>
+  </if>
 model: <resolved standard tier>
 ```
 
-6f. After test writer completes:
+6g. After test writer completes:
     - Run `git rev-parse HEAD` and save as `TEST_COMMIT_HASH`
     - Append a journal event:
       ```json
       {"ts":"YYYY-MM-DDTHH:MM:SS","event":"worker_complete","plan_id":"<NNN>","path":"complex","data":{"role":"test_writer","verdict":"none"}}
       ```
-    - If `tdd.approve_tests` is true: present the TDD Gate approval question (same as standard path §TDD Phase step 7f,
+    - If `tdd.approve_tests` is true: present the TDD Gate approval question (same as standard path §TDD Phase step 7g,
       including the "show test files first" step — run `git diff --name-only <TEST_BASELINE_HASH>..HEAD` and list them).
     - If approved or approve_tests is false: append a tdd_gate journal event and continue to Execution.
       ```json

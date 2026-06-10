@@ -290,6 +290,7 @@ METRICS RULES:
     - none: no review ran (simple path)
   - fix_cycles: how many fix/re-review rounds were needed (0 if review passed)
   - tdd_used: whether TDD was active (TEST_COMMIT_HASH was non-null). Always false for simple path.
+  - tester_specialist: the agent string used for test writing (e.g. "graft:jenkins-tester"), or null if no tester specialist was delegated to. Always null for simple path.
   - completed: ISO date
 - The metrics file is a JSON object with a "tasks" array. Append, never overwrite.
 - /trellis:status reads this file and computes summary stats.
@@ -349,6 +350,8 @@ JOURNAL RULES (orchestrator only — workers do not write the journal):
 Event format — each line is a valid JSON object:
   {"ts":"YYYY-MM-DDTHH:MM:SS","event":"<type>","plan_id":"<NNN or null>","path":"simple|standard|complex","data":{...}}
 
+plan_id is null for simple path tasks (no plan file is created). All other paths have a numeric NNN.
+
 The data field carries event-specific context:
   plan_start:      {"title":"<plan title>","baseline_hash":"<git hash>"}
   worker_complete: {"role":"implement|review|fix|test_writer","verdict":"pass|fixme|none"}
@@ -400,6 +403,23 @@ TDD VERIFICATION — REVIEW WORKER:
   Rationale: modifying assertions games the tests rather than fixing the code.
 ```
 
+## 17. Tester Specialist Delegation
+
+```
+TESTER SPECIALIST DELEGATION:
+A tester specialist has been identified for this domain. Delegate test writing:
+  1. Spawn the tester agent with plan description
+  2. Include in prompt: "Write failing tests for [plan tasks and done_when criteria].
+     Do NOT write any production code. Do NOT commit."
+  3. Wait for tester to finish
+  4. Review the tests against done_when criteria yourself — confirm each criterion
+     has at least one test case, and that the tests will fail without production code
+  5. Commit with trellis commit protocol: "test: <plan-title> [TDD baseline]"
+  6. Log learnings
+- The tester handles test quality and framework conventions. You own the commit and
+  the verification that tests actually fail (run the suite before declaring done).
+```
+
 ## Machine-Parseable Output Tags
 
 Workers produce structured outputs that orchestrators parse via regex. Tags must appear on their own line.
@@ -438,6 +458,7 @@ needs — extra sections waste context tokens without helping the worker.
 | §16 TDD (test writer rules) | — | — | — | — | — | yes (when active) |
 | §16 TDD (implement constraint) | yes (when active) | — | yes (when active) | — | — | — |
 | §16 TDD (review verification) | — | yes (when active) | — | — | — | — |
+| §17 Tester Specialist | — | — | — | — | — | yes (when testers: configured) |
 
 Notes:
 - §10 Backlog, §13 Metrics, and §15 Journal are handled by the orchestrator, not injected into workers
@@ -446,3 +467,4 @@ Notes:
 - §14 Deviation gives implement workers graduated autonomy rules for handling surprises without blocking on every hiccup
 - §16 TDD sub-sections are conditional: only inject when `tdd.enabled: true` in trellis.yaml. Each worker role gets only its relevant sub-section.
 - §16 TDD implement constraint is also injected into FIX workers: a fix worker that patches test failures must respect the same no-modify-assertions rule.
+- §17 Tester Specialist is conditional: only inject when a matching `testers:` key exists in trellis.yaml for the task's domain. Requires TDD to be active — if TDD is disabled, the TEST WRITER never runs and §17 is irrelevant. The orchestrator resolves domain detection before injecting §17, so the TEST WRITER does not need to re-check the YAML — it can assume a specialist is available.

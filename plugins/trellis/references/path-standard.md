@@ -82,7 +82,13 @@ Use AskUserQuestion:
 7d. Record current commit hash as the pre-test baseline:
     Run `git rev-parse HEAD` and save as `TEST_BASELINE_HASH`.
 
-7e. Spawn the test writer worker:
+7e. Determine if a tester specialist applies:
+    - Read `testers` config from `.trellis/trellis.yaml`
+    - Apply the same domain detection as §4 (Specialist Delegation): match the plan's primary files
+      against tester keys in trellis.yaml (priority: explicit mention > 80%+ file match > no match)
+    - Save the result as TESTER_AGENT (the configured agent string, or null if none matches)
+
+7f. Spawn the test writer worker:
 
 ```
 description: "write tests for <plan-title>"
@@ -103,10 +109,16 @@ prompt: |
   <"§2 Learning Protocol" section>
   <"§16 TDD — TEST WRITER" sub-section>
   <"§12 Visual Identity" section>
+
+  <if TESTER_AGENT is not null>:
+  ## Tester Specialist
+  <paste "§17 Tester Specialist Delegation" section from conventions.md>
+  Delegate test writing to: <TESTER_AGENT>
+  </if>
 model: <resolved standard tier>
 ```
 
-7f. After test writer completes:
+7g. After test writer completes:
     - Run `git rev-parse HEAD` and save as `TEST_COMMIT_HASH`
     - Append a journal event:
       ```json

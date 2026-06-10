@@ -162,8 +162,9 @@ process.stdin.on('end', () => {
  * Minimal YAML parser for the stewardship.audits section.
  * Returns { lens: { frequency, mode } } or null.
  *
- * Assumes 2-space indent (matches trellis.yaml.template format).
- * Not a general-purpose parser — only handles the structure trellis creates.
+ * Indent-relative: detects the indent level of 'stewardship:' and 'audits:'
+ * dynamically rather than assuming fixed 2-space indentation. This handles
+ * trellis.yaml files edited with 4-space, tab-expanded, or non-standard indent.
  */
 function parseAuditsConfig(yaml) {
   const lines = yaml.split('\n');
@@ -171,37 +172,44 @@ function parseAuditsConfig(yaml) {
   let inStewardship = false;
   let inAudits = false;
   let currentLens = null;
+  let stewardshipIndent = 0;
+  let auditsIndent = 0;
 
   for (const line of lines) {
     const trimmed = line.trimStart();
+    if (!trimmed || trimmed.startsWith('#')) continue;
     const indent = line.length - trimmed.length;
 
     if (trimmed.startsWith('stewardship:')) {
       inStewardship = true;
+      stewardshipIndent = indent;
       inAudits = false;
+      currentLens = null;
       continue;
     }
 
-    if (inStewardship && indent === 0 && trimmed.length > 0 && !trimmed.startsWith('#')) {
-      break; // left stewardship section
-    }
-
-    if (inStewardship && trimmed.startsWith('audits:')) {
-      inAudits = true;
-      continue;
-    }
-
-    if (inAudits) {
-      // Left audits section (back to stewardship-level or top-level key)
-      if (indent <= 2 && trimmed.length > 0 && !trimmed.startsWith('#') &&
-          !trimmed.startsWith('audits')) {
-        inAudits = false;
-        currentLens = null;
-        // Don't consume the line — let the outer loop re-check it
+    if (inStewardship) {
+      // A non-comment, non-empty line at the same or lower indent exits stewardship
+      if (indent <= stewardshipIndent) {
         break;
       }
 
-      // Lens name at indent 4 (e.g., "    consistency:")
+      if (trimmed.startsWith('audits:')) {
+        inAudits = true;
+        auditsIndent = indent;
+        continue;
+      }
+    }
+
+    if (inAudits) {
+      // Back to stewardship level (or above) — left the audits block
+      if (indent <= auditsIndent) {
+        inAudits = false;
+        currentLens = null;
+        break;
+      }
+
+      // Lens name: one indent level below audits (e.g., "    consistency:")
       const lensMatch = trimmed.match(/^(\w+):$/);
       if (lensMatch && !trimmed.startsWith('frequency') && !trimmed.startsWith('mode')) {
         currentLens = lensMatch[1];
@@ -209,7 +217,7 @@ function parseAuditsConfig(yaml) {
         continue;
       }
 
-      // Lens properties at indent 6 (e.g., "      frequency: 8")
+      // Lens properties: two indent levels below audits (e.g., "      frequency: 8")
       if (currentLens) {
         const freqMatch = trimmed.match(/^frequency:\s*(\d+)/);
         if (freqMatch) {
