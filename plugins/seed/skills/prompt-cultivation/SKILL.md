@@ -2,14 +2,13 @@
 name: prompt-cultivation
 version: 1.0.0
 description: |
-  Prompt engineering knowledge and refinement techniques for Claude. Loaded by
-  /seed:germinate and the cultivator agent. Provides the 8 core prompting techniques,
-  diagnostic triggers, Claude-specific optimizations, and the prompt anatomy framework.
-  Use whenever transforming rough ideas into structured prompts, reviewing prompt quality,
-  or designing multi-prompt systems.
+  Use when transforming rough ideas into structured prompts, reviewing prompt quality,
+  or designing multi-prompt systems. Prompt engineering knowledge and refinement
+  techniques for Claude — the 8 core techniques, diagnostic triggers, Claude-specific
+  optimizations, and the prompt anatomy framework. Loaded by /seed:germinate and the
+  cultivator agent.
 allowed-tools:
   - Read
-  - Bash
   - Grep
   - Glob
 disable-model-invocation: true

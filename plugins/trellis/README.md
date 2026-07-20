@@ -67,12 +67,20 @@ specialists:
   # java: javacraft:java-developer
 
 models:
-  worker: sonnet       # default for all workers (sonnet, opus, haiku, or any model ID)
+  worker: sonnet       # fallback for workers with no tier/role match
   # planner: opus      # per-role overrides (optional)
   # implementer: sonnet
   # reviewer: haiku
   # fixer: sonnet
+  tiers:               # adaptive routing by task complexity — active by default
+    simple: haiku      # 1-5 files, clear fixes
+    standard: sonnet   # 6+ files, bounded scope
+    complex: opus      # cross-cutting, redesign, security/arch review
 ```
+
+By default trellis routes each task to a fitting model via `models.tiers`: `haiku` for
+simple fixes, `sonnet` for standard work, `opus` for complex or security/architecture
+tasks. Comment the `tiers` block out to fall back to per-role / `models.worker` resolution.
 
 ## Specialists
 

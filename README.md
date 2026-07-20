@@ -11,13 +11,13 @@ Take what you need, ignore the rest, and don’t be surprised if things evolve.
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| [bark](plugins/bark/) | 2.0.0 | Opinionated Bash development — conventions, patterns, and tool preferences |
-| [trellis](plugins/trellis/) | 2.2.0 | Agent framework for structured development — plan, implement, review, learn |
+| [bark](plugins/bark/) | 2.1.0 | Opinionated Bash development — conventions, patterns, and tool preferences |
+| [trellis](plugins/trellis/) | 2.16.0 | Agent framework for structured development — plan, implement, review, learn |
 | [vine](plugins/vine/) | 1.0.0 | Television (tv) fuzzy finder expertise — channels, templates, shell integration |
-| [graft](plugins/graft/) | 1.0.0 | Jenkins plugin development — agents, review patterns, and deep API knowledge |
+| [graft](plugins/graft/) | 1.1.0 | Jenkins plugin development — agents, review patterns, and deep API knowledge |
 | [thorn](plugins/thorn/) | 1.0.0 | Local code review processing — find and act on localreview.nvim comments |
 | [bloom](plugins/bloom/) | 1.1.0 | Terminal presentations with presenterm — brainstorm, structure, build, and review slide decks |
-| [seed](plugins/seed/) | 1.0.0 | Prompt cultivation — transform rough ideas into structured, technique-informed prompts |
+| [seed](plugins/seed/) | 1.1.0 | Prompt cultivation — transform rough ideas into structured, technique-informed prompts |
 
 More seeds will appear over time.
 

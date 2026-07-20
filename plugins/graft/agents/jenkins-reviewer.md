@@ -14,7 +14,7 @@ description: |
   modeled on the review patterns of Jenkins core maintainers.
 tools: Read, Bash, Grep, Glob
 skills: jenkins-reviews, jenkins-architecture, jenkins-ui
-model: sonnet
+model: opus
 color: pink
 ---
 

@@ -17,7 +17,7 @@ description: |
   identifies auto-fixable issues, and provides a graded verdict (A/B/C).
 tools: Read, Bash, Grep, Glob
 skills: bash-style-guide, bash-tools, bash-patterns
-model: sonnet
+model: haiku
 color: pink
 ---
 

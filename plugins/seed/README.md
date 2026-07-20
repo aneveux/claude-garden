@@ -42,7 +42,7 @@ The full pipeline: dig (discover) → harden (validate) → germinate (refine) �
 
 | Agent | Purpose | Model |
 |-------|---------|-------|
-| `cultivator` | Multi-prompt system design, skill authoring, deep refinement | sonnet |
+| `cultivator` | Multi-prompt system design, skill authoring, deep refinement | opus |
 
 Use the cultivator agent for complex scenarios: designing interconnected prompt systems, building
 Claude Code skills from scratch, or long iterative sessions. For single-prompt refinement, prefer

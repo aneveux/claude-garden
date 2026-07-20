@@ -1,4 +1,4 @@
-# Graft v1.0.0
+# Graft v1.1.0
 
 Jenkins plugin development plugin with expert-level agents for implementing, reviewing, and testing Jenkins plugins. Encodes community best practices, core maintainer review patterns, and the full Jenkins API surface.
 
@@ -45,15 +45,17 @@ Deep-dive documentation loaded by skills when more detail is needed:
 
 Specialized agents that auto-load skills as context.
 
-| Agent               | Purpose                    | Skills                                          | Tool Access                    |
-|---------------------|----------------------------|-------------------------------------------------|--------------------------------|
-| `jenkins-developer` | Plugin implementation      | architecture, pipeline, ui                      | Read, Write, Edit, Bash, Grep, Glob |
-| `jenkins-reviewer`  | Code quality review        | reviews, architecture, ui                       | Read, Bash, Grep, Glob        |
-| `jenkins-tester`    | Test suite generation      | testing, pipeline, architecture                 | Read, Write, Edit, Bash, Grep, Glob |
+| Agent               | Purpose                    | Skills                                          | Model  | Tool Access                    |
+|---------------------|----------------------------|-------------------------------------------------|--------|--------------------------------|
+| `jenkins-developer` | Plugin implementation      | architecture, pipeline, ui                      | sonnet | Read, Write, Edit, Bash, Grep, Glob |
+| `jenkins-reviewer`  | Code quality review        | reviews, architecture, ui                       | opus   | Read, Bash, Grep, Glob        |
+| `jenkins-tester`    | Test suite generation      | testing, pipeline, architecture                 | sonnet | Read, Write, Edit, Bash, Grep, Glob |
 
 **Invocation:** `/agent <agent-name>`
 
 The jenkins-developer writes production plugin code following community standards. The jenkins-reviewer produces structured review reports modeled on core maintainer review patterns with P0/P1/P2 severity and A/B/C grading. The jenkins-tester generates JenkinsRule, Pipeline, snippetizer, and security tests.
+
+Models fit the task: jenkins-reviewer runs on `opus` for deep security and API-correctness reasoning; the developer and tester use `sonnet`. The jenkins-developer runs in an isolated git worktree (`isolation: worktree`) with a `user`-scoped memory scratchpad for cross-project Jenkins API gotchas and harness quirks.
 
 ## Knowledge Sources
 

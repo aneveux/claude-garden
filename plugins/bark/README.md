@@ -37,15 +37,17 @@ Skills are loaded on-demand for context-specific guidance.
 
 Specialized agents that auto-load skills as context to enforce conventions.
 
-| Agent                  | Purpose                  | Skills                                    | Tool Access       |
-|------------------------|--------------------------|-------------------------------------------|--------------------|
-| `bash-developer`       | Script development       | style-guide, tools, patterns, project-setup, testing | Read, Write, Edit |
-| `bash-code-reviewer`   | Code quality validation  | style-guide, tools, patterns              | Read only          |
-| `bash-test-writer`     | Test suite generation    | testing, tools, style-guide, project-setup | Read, Write       |
+| Agent                  | Purpose                  | Skills                                    | Model  | Tool Access       |
+|------------------------|--------------------------|-------------------------------------------|--------|--------------------|
+| `bash-developer`       | Script development       | style-guide, tools, patterns, project-setup, testing | sonnet | Read, Write, Edit |
+| `bash-code-reviewer`   | Code quality validation  | style-guide, tools, patterns              | haiku  | Read only          |
+| `bash-test-writer`     | Test suite generation    | testing, tools, style-guide, project-setup | sonnet | Read, Write       |
 
 **Invocation:** `/agent <agent-name>`
 
 The bash-developer writes production scripts following all bark conventions. The bash-code-reviewer provides actionable feedback with severity levels (P0/P1/P2) and fixability indicators. The bash-test-writer generates bats test suites with setup/teardown isolation and selective mocking patterns.
+
+Models fit the task: bash-code-reviewer runs on `haiku` (mechanical shellcheck/shfmt parsing), while the developer and test-writer use `sonnet`. The bash-developer runs in an isolated git worktree (`isolation: worktree`) so parallel runs never collide, with a `user`-scoped memory scratchpad for cross-project bash idioms and gotchas.
 
 ## Commands
 
@@ -71,4 +73,4 @@ Templates provide static reference files that complement the dynamic agent and s
 
 ## Version
 
-2.0.0
+2.1.0

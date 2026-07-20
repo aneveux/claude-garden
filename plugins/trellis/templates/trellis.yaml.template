@@ -22,13 +22,12 @@ models:
 
   # Adaptive tier routing — selects model by task complexity.
   # Overrides per-role config when the orchestrator detects a tier match.
-  # simple:   1-5 files, clear fixes (default: haiku — fast and cheap)
-  # standard: 6+ files, bounded scope (default: sonnet — balanced)
-  # complex:  cross-cutting, redesign, security/arch review (default: opus — thorough)
-  # tiers:
-  #   simple: haiku
-  #   standard: sonnet
-  #   complex: opus
+  # Active by default so each activity runs on a fitting model; comment out to
+  # fall back to per-role / models.worker resolution.
+  tiers:
+    simple: haiku    # 1-5 files, clear fixes — fast and cheap
+    standard: sonnet # 6+ files, bounded scope — balanced
+    complex: opus    # cross-cutting, redesign, security/arch review — thorough
 
 tdd:
   # Test-Driven Development mode.

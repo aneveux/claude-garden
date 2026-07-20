@@ -1,20 +1,14 @@
 ---
 name: cultivator
 description: |
-  Design complex multi-prompt systems, system prompt suites, or deeply iterative
-  prompt refinement sessions. Use this agent instead of /seed:germinate when the
-  task involves multiple interconnected prompts, designing a full skill/command,
-  or building an API system prompt with multiple interaction modes.
-tools:
-  - Read
-  - Write
-  - Edit
-  - Bash
-  - Grep
-  - Glob
+  Use when designing complex multi-prompt systems, system prompt suites, or running
+  deeply iterative prompt refinement — multiple interconnected prompts, a full
+  skill/command, or an API system prompt with several interaction modes. Reach for
+  this instead of /seed:germinate when a single refined prompt isn't enough.
+tools: Read, Write, Edit, Grep, Glob
 skills:
   - prompt-cultivation
-model: sonnet
+model: opus
 color: green
 ---
 
