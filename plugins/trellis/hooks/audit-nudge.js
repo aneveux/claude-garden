@@ -45,7 +45,7 @@ process.stdin.on('end', () => {
     if (!/git\s+commit\b/.test(cmd) || /--amend/.test(cmd)) process.exit(0);
 
     // Skip if the commit failed (don't inflate counters on errors)
-    const result = String(data.tool_result || '');
+    const result = String(data.tool_response || '');
     if (/^error:|nothing to commit|no changes added|aborting commit/im.test(result)) process.exit(0);
 
     // Check trellis is initialized
