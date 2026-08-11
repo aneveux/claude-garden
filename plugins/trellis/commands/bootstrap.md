@@ -14,8 +14,8 @@ Initialize trellis on the current project. Creates `.trellis/` directory with co
    - Stop.
 
 2. Locate templates:
-   - Glob: `**/trellis/templates/*.template`
-   - Read `trellis.yaml.template` and `STATE.md.template` (core config files)
+   - Templates live in `${CLAUDE_PLUGIN_ROOT}/templates/`
+   - Read `trellis.yaml.template` and `STATE.md.template` there (core config files)
 
 ## Questions
 
@@ -98,7 +98,7 @@ After creating .trellis/ files, set up stewardship documents.
 
 For each document (VISION, DECISIONS, ARCHITECTURE):
 1. Check if the file already exists at the configured path — if yes, skip
-2. Read the template: Glob `**/trellis/templates/<DOC>.md.template`
+2. Read the template: read `${CLAUDE_PLUGIN_ROOT}/templates/<DOC>.md.template`
 3. Replace placeholders ({{PROJECT_NAME}}, {{PROJECT_DESCRIPTION}})
 4. **For existing codebases**: spawn an analysis agent (read-only) to infer content from the codebase, then pre-fill the template with findings
 5. **For new projects**: use the empty template (no analysis needed — there's no code yet)
@@ -162,7 +162,7 @@ Note: if `stewardship.architecture` is not configured (commented out in trellis.
     }
     ```
 
-10. Read `BACKLOG.md.template`: Glob `**/trellis/templates/BACKLOG.md.template`
+10. Read `BACKLOG.md.template`: read `${CLAUDE_PLUGIN_ROOT}/templates/BACKLOG.md.template`
     Write it to `.trellis/BACKLOG.md`.
 
 ## Report

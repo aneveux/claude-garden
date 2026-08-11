@@ -28,7 +28,7 @@ If no argument, use `AskUserQuestion` to let the user choose:
 
 ## Plots Mode (Templates)
 
-1. Read all template files from `references/plots/` in this plugin using `Glob`
+1. Read all template files from `${CLAUDE_PLUGIN_ROOT}/references/plots/`
 2. For each template, extract from frontmatter: name, category, description, recommended-techniques
 3. Present a summary table:
 
@@ -71,7 +71,7 @@ Herbarium Specimens
 
 ## Techniques Mode
 
-1. Read the `prompt-cultivation` skill from `skills/prompt-cultivation/SKILL.md` in this plugin
+1. Read the `prompt-cultivation` skill from `${CLAUDE_PLUGIN_ROOT}/skills/prompt-cultivation/SKILL.md`
 2. Present the 8 techniques as a quick-reference table:
 
 ```

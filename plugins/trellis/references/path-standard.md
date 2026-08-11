@@ -27,7 +27,7 @@ Show the seedling:
       - Does this work align with VISION.md principles?
       - Does the approach conflict with any ADR in DECISIONS.md?
       - If misalignment found: include a "## Notes" section in the plan flagging it
-2. Find and read the plan format reference: Glob `**/trellis/references/plan-format.md`, then read it
+2. Read the plan format reference at `${CLAUDE_PLUGIN_ROOT}/references/plan-format.md`
 3. Draft a lightweight plan:
    - Title
    - Numbered task list with file paths and descriptions
@@ -162,7 +162,7 @@ model: <resolved standard tier>
 
 ## Implementation
 
-8. Find and read the conventions reference: Glob `**/trellis/references/conventions.md`, then read it. You will paste relevant sections from this file into each worker's spawn prompt.
+8. Read the conventions reference at `${CLAUDE_PLUGIN_ROOT}/references/conventions.md`. You will paste relevant sections from this file into each worker's spawn prompt.
 9. Read `.trellis/trellis.yaml` for specialist config and worker model. Resolve the model tier:
    - If `models.tiers.standard` is set, use it for implement + fix workers
    - Else if `models.implementer` is set, use it

@@ -53,7 +53,7 @@ model: <tiers.complex > models.planner > models.worker, default sonnet — resea
       <DECISIONS.md contents>
     - Tell the plan worker: "Flag any misalignment with vision principles or decision conflicts in a ## Notes section"
 
-3. Find and read the plan format reference (Glob `**/trellis/references/plan-format.md`)
+3. Find and read the plan format reference (`${CLAUDE_PLUGIN_ROOT}/references/plan-format.md`)
 4. Either:
    a. Draft the plan yourself (if scope is clear from research + code reading)
    b. Spawn a plan worker (if scope is large):
@@ -182,7 +182,7 @@ model: <resolved standard tier>
 
 ## Execution
 
-7. Read conventions reference: Glob `**/trellis/references/conventions.md`, then read it.
+7. Read the conventions reference at `${CLAUDE_PLUGIN_ROOT}/references/conventions.md`.
 8. Read `.trellis/trellis.yaml` for specialist config
 9. Determine if a specialist applies using §4 (Specialist Delegation) from conventions.md.
 10. Record the current commit hash as the implementation baseline:
@@ -238,4 +238,4 @@ model: <resolved standard tier>
 
 ## Review and Completion
 
-After all waves complete, follow path-standard.md (Glob `**/trellis/references/path-standard.md`) starting from the **Review** section. The review/fix cycle and completion flow are identical — gather changed files using `git diff --name-only <BASELINE_HASH>..HEAD` (from step 10), spawn review worker, handle verdict, update state.
+After all waves complete, follow path-standard.md (`${CLAUDE_PLUGIN_ROOT}/references/path-standard.md`) starting from the **Review** section. The review/fix cycle and completion flow are identical — gather changed files using `git diff --name-only <BASELINE_HASH>..HEAD` (from step 10), spawn review worker, handle verdict, update state.

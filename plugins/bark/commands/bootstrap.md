@@ -9,7 +9,7 @@ Copy the bark project templates to the current working directory. Templates prov
 
 ## Template Location
 
-Templates are located at `$CLAUDE_PLUGIN_ROOT/templates/`. Find the plugin root by locating the directory containing this command file, then navigate to the sibling `templates/` directory.
+Templates are located at `${CLAUDE_PLUGIN_ROOT}/templates/`.
 
 Available templates:
 - `CLAUDE.md.template` → `CLAUDE.md`
@@ -20,10 +20,7 @@ Available templates:
 
 ### 1. Locate Templates
 
-Use Glob to find the template files:
-```
-Glob pattern: **/plugins/bark/templates/*.template
-```
+Read the three template files from `${CLAUDE_PLUGIN_ROOT}/templates/`.
 
 ### 2. Read Templates
 
@@ -61,6 +58,6 @@ Bark bootstrap complete:
 If any files were skipped, suggest:
 ```
 Skipped files already exist. Review templates at:
-  plugins/bark/templates/
+  ${CLAUDE_PLUGIN_ROOT}/templates/
 and merge manually if needed.
 ```

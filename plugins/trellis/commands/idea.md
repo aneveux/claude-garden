@@ -42,7 +42,7 @@ If the idea duplicates an existing backlog item, note it:
 
 ### Step 3: Store
 
-Read `.trellis/BACKLOG.md`. If it doesn't exist, create it from template (Glob `**/trellis/templates/BACKLOG.md.template`).
+Read `.trellis/BACKLOG.md`. If it doesn't exist, create it from template (`${CLAUDE_PLUGIN_ROOT}/templates/BACKLOG.md.template`).
 
 Append the idea under `### Normal` in the `## Open` section:
 

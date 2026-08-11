@@ -70,7 +70,7 @@ Use AskUserQuestion:
 4. Route based on plan type and remaining work:
 
    **Standard plan with remaining tasks**:
-   - Read conventions reference (Glob `**/trellis/references/conventions.md`)
+   - Read conventions reference (`${CLAUDE_PLUGIN_ROOT}/references/conventions.md`)
    - Spawn implement worker with ONLY the unchecked tasks and the plan's Done When criteria.
      If TEST_BASELINE_HASH and TEST_COMMIT_HASH were recovered in step 1c, include the TDD Constraint
      block in the implement worker's prompt (paste §16 TDD — IMPLEMENT WORKER from conventions.md
@@ -78,11 +78,11 @@ Use AskUserQuestion:
    - After implementation: spawn review worker covering ALL changes (not just this session's).
      Use `git diff` against the commit before the plan started, or review all files listed in the plan.
      If TEST_BASELINE_HASH and TEST_COMMIT_HASH were recovered, include the TDD Verification block too.
-   - Read `references/path-standard.md` (Glob `**/trellis/references/path-standard.md`) and follow the Review section for the review/fix cycle and Completion
+   - Read `references/path-standard.md` (`${CLAUDE_PLUGIN_ROOT}/references/path-standard.md`) and follow the Review section for the review/fix cycle and Completion
 
    **Complex plan with remaining waves**:
    - Identify the first wave with unchecked tasks
-   - Read `references/path-complex.md` (Glob `**/trellis/references/path-complex.md`)
+   - Read `references/path-complex.md` (`${CLAUDE_PLUGIN_ROOT}/references/path-complex.md`)
    - Resume wave-by-wave from the Execution section
    - Partially-completed waves: spawn workers only for unchecked tasks within the wave
    - If TDD hashes were recovered in step 1c: the Execution section in path-complex.md uses
@@ -170,16 +170,15 @@ Inform the user which path you chose (use 🌱 lifecycle emoji):
 
 Read the appropriate path reference file and follow its instructions:
 
-- **Simple**: Glob `**/trellis/references/path-simple.md`, read and execute
-- **Standard**: Glob `**/trellis/references/path-standard.md`, read and execute
-- **Complex**: Glob `**/trellis/references/path-complex.md`, read and execute
+- **Simple**: read `${CLAUDE_PLUGIN_ROOT}/references/path-simple.md` and execute
+- **Standard**: read `${CLAUDE_PLUGIN_ROOT}/references/path-standard.md` and execute
+- **Complex**: read `${CLAUDE_PLUGIN_ROOT}/references/path-complex.md` and execute
 
 ## Context Health (applies throughout path execution)
 
 Trellis ships three hooks that run automatically (no setup needed):
 - `context-monitor.js` (PostToolUse): fires after every tool call, emits "TRELLIS CONTEXT WARNING/CRITICAL" when context is high
 - `audit-nudge.js` (PostToolUse/Bash): fires after git commits, emits "TRELLIS AUDIT NUDGE/AUTO-TRIGGER" when audit thresholds are reached
-- `command-compressor.js` (PreToolUse/Bash): transparently rewrites high-output commands (git log, git diff, test runners, grep) to pipe through RTK before they run, keeping tool output compact in context
 - `session-save.js` (Stop): fires when Claude stops, preserving session context
 
 Between worker spawns (after any worker completes, before spawning the next):

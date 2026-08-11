@@ -27,8 +27,8 @@ If the argument doesn't match any lens, suggest the closest match.
 
 ## Step 3: Load Lens Definitions and Conventions
 
-1. Read the audit lenses reference: Glob `**/trellis/references/audit-lenses.md`, then read it.
-2. Read the conventions reference: Glob `**/trellis/references/conventions.md`, then read it.
+1. Read the audit lenses reference at `${CLAUDE_PLUGIN_ROOT}/references/audit-lenses.md`.
+2. Read the conventions reference at `${CLAUDE_PLUGIN_ROOT}/references/conventions.md`.
    You'll need the **Audit Protocol** and **Learning Protocol** sections for the audit agent prompt in Step 6.
 
 ## Step 4: Determine Scope
@@ -51,7 +51,7 @@ Based on each lens's "Requires" field from the lenses reference:
 - Read the project's CLAUDE.md if it exists (for consistency lens especially)
 
 If a lens requires a document that doesn't exist:
-- For ARCHITECTURE.md specifically: check if a template exists (Glob `**/trellis/templates/ARCHITECTURE.md.template`).
+- For ARCHITECTURE.md specifically: check if a template exists (`${CLAUDE_PLUGIN_ROOT}/templates/ARCHITECTURE.md.template`).
   If found, offer to create it:
   "Architecture audit needs ARCHITECTURE.md but it doesn't exist yet. Want me to create one from the template?"
   Use AskUserQuestion:
@@ -153,7 +153,7 @@ Wait for the agent to complete.
 
 ## Step 8: Update Backlog and State
 
-1. Read `.trellis/BACKLOG.md` (create from template if missing: Glob `**/trellis/templates/BACKLOG.md.template`)
+1. Read `.trellis/BACKLOG.md` (create from template if missing: read `${CLAUDE_PLUGIN_ROOT}/templates/BACKLOG.md.template`)
 2. For each **critical** and **warning** finding:
    - Check if a similar item already exists in the backlog (same lens + similar description). Skip duplicates.
    - Append new findings under the matching severity heading in the `## Open` section:

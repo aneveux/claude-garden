@@ -27,7 +27,7 @@ Store the raw input as the `original_seed` — you'll need it for the compare st
 
 ## Step 1: Analyze the Seed
 
-Read the `prompt-cultivation` skill from `skills/prompt-cultivation/SKILL.md` in this plugin for technique knowledge.
+Read the `prompt-cultivation` skill from `${CLAUDE_PLUGIN_ROOT}/skills/prompt-cultivation/SKILL.md` for technique knowledge.
 
 **If the seed has `source: seed:dig` or `source: seed:harden` frontmatter**: this is a pre-explored spec from `/seed:dig` and/or stress-tested via `/seed:harden`. The Problem, Requirements, Constraints, and Success Criteria are already defined through adversarial discussion. Skip Step 3 (clarifying questions) entirely — go straight to Step 2 for template matching and Step 4 for technique selection. Use the spec's "Technique Hints" section as your starting recommendation. If `source: seed:harden` is present, the spec has passed fresh-context validation — you can trust it has no hidden assumptions or ambiguity.
 
@@ -41,7 +41,7 @@ Read the `prompt-cultivation` skill from `skills/prompt-cultivation/SKILL.md` in
 ## Step 2: Classify and Match Template
 
 Check if the seed matches a known template category:
-- Read the template files in `references/plots/` within this plugin
+- Read the template files in `${CLAUDE_PLUGIN_ROOT}/references/plots/`
 - If a template matches the seed's intent, use it as the structural starting point
 - If no template matches, use the generic prompt anatomy from the skill
 

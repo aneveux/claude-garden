@@ -176,9 +176,9 @@ Use `AskUserQuestion` to offer next steps:
 - **Cultivator** — if the discussion revealed a multi-prompt system need, suggest handing off to the cultivator agent
 - **Done** — the user just wanted the spec, nothing more
 
-If "Harden": write the spec to a temp file (e.g., `/tmp/seed-dig-spec-{{topic-slug}}.md`) and then proceed to execute the harden workflow — read and follow `commands/harden.md` in this plugin, passing the spec file as input.
+If "Harden": write the spec to a temp file (e.g., `/tmp/seed-dig-spec-{{topic-slug}}.md`) and then proceed to execute the harden workflow — read and follow `${CLAUDE_PLUGIN_ROOT}/commands/harden.md`, passing the spec file as input.
 
-If "Germinate": write the spec to a temp file (e.g., `/tmp/seed-dig-spec-{{topic-slug}}.md`) and then proceed to execute the germinate workflow directly — read and follow `commands/germinate.md` in this plugin, passing the spec file as input. The spec's `source: seed:dig` frontmatter tells germinate to skip its questioning phase and go straight to technique application. No need to ask the user to run a separate command.
+If "Germinate": write the spec to a temp file (e.g., `/tmp/seed-dig-spec-{{topic-slug}}.md`) and then proceed to execute the germinate workflow directly — read and follow `${CLAUDE_PLUGIN_ROOT}/commands/germinate.md`, passing the spec file as input. The spec's `source: seed:dig` frontmatter tells germinate to skip its questioning phase and go straight to technique application. No need to ask the user to run a separate command.
 
 ## Step 6: Record Metrics
 
